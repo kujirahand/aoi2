@@ -1,0 +1,203 @@
+#=======================================================================
+# ModuleSwf.aoi2
+#=======================================================================
+# Flash Player7 を対象とした仮想マシン用の関数を定義したもの
+#-----------------------------------------------------------------------
+# TARGET:SWF
+#-----------------------------------------------------------------------
+「ModuleSystem.aoi2」を取り込む。
+#-----------------------------------------------------------------------
+#<function>
+#-----------------------------------------------------------------------
+#+画面への出力
+#-----------------------------------------------------------------------
+#-基本的な画面出力
+●移動(XX,YYに|YYへ)                ="ModuleSwf"@4  # gui_move          # GUI部品初期配置位置を移動する
+●表示(Sを|Sと|Sで|Sの)             ="ModuleSwf"@106# print             # 画面にSを表示する(実際はラベルを作成してIDを返す)
+●線(X1,Y1からX2,Y2へ|Y2に|Y2まで)  ="ModuleSwf"@10 # draw_line         # 線を引く
+●四角(X1,Y1からX2,Y2へ|Y2に|Y2まで)="ModuleSwf"@11 # draw_rectangle    # 四角形(矩形)を描画する
+●円描画(X1,Y1からX2,Y2へ|Y2に|Y2まで)="ModuleSwf"@12 # draw_circle       # 円を描画する
+●多角形(ARRAYの|ARRAYで)           ="ModuleSwf"@13 # draw_poly         # 多角形を描画する
+●画面クリア                        ="ModuleSwf"@14 # draw_clear        # 描画対象に描画された内容を消去する
+●ブロック描画(W,HでDATAを)         ="ModuleSwf"@15 # draw_blocks       # 幅W,高さHを1ブロックとして二次元配列DATAを描画
+●タイル描画(W,HでDATAを)           ="ModuleSwf"@38 # draw_tiles        # 幅W,高さHを1タイルとして配列を描画(Fが透過色)。例)['01','12','23']
+●マウス落書モード開始              ="ModuleSwf"@16 # draw_mousepen_start # マウスで画面に落書できるようにする
+●マウス落書モード終了              ="ModuleSwf"@17 # draw_mousepen_end   # 落書モードを終了し、落書きデータ(マクロ文字列)を返す
+●マクロ描画(SをWAITで)             ="ModuleSwf"@37 # draw_macro          # マクロ文字列Sで描画する(WAITミリ秒ずつ描画)
+●RGB(R,G,B)                        ="ModuleSwf"@36 # rgb               # Red,Green,Blueの3色を混ぜたカラーコードを返す
+#-描画に関する設定
+●線色設定(COLORに)                 ="ModuleSwf"@20 # draw_setLineColor # 線色を指定
+●線色取得                          ="ModuleSwf"@21 # draw_getLineColor # 線色を取得
+●線太さ設定(Wに)                   ="ModuleSwf"@22 # draw_setLineWidth # 線太さを指定
+●線太さ取得                        ="ModuleSwf"@23 # draw_getLineWidth # 線の太さを取得
+●塗り色設定(COLORに)               ="ModuleSwf"@24 # draw_setFillColor # 塗り色を指定
+●塗り色取得                        ="ModuleSwf"@25 # draw_getFillColor # 塗り色を取得
+●透明度設定(PERCENTに)             ="ModuleSwf"@26 # draw_setAlpha     # 塗り透明度を指定
+●透明度取得                        ="ModuleSwf"@27 # draw_getAlpha     # 塗り透明度を取得
+●描画対象設定(OBJが|OBJに|OBJへ)   ="ModuleSwf"@28 # draw_setTarget    # 描画対象オブジェクトを指定
+●描画対象取得                      ="ModuleSwf"@29 # draw_getTarget    # 描画対象オブジェクトのIDを返す
+●親部品設定(OBJが|OBJに|OBJへ)     ="ModuleSwf"@140   # gui_setParent     # これから生成する部品の親オブジェクトのIDを指定
+●親部品取得                        ="ModuleSwf"@141   # gui_getParent     # これから生成する部品の親オブジェクトのIDを返す
+●フォントサイズ設定(SIZEに|SIZEへ) ="ModuleSwf"@30 # font_setSize      # フォントサイズを設定
+●フォントサイズ取得                ="ModuleSwf"@31 # font_getSize      # フォントサイズを取得
+●フォント色設定(COLに|COLへ)       ="ModuleSwf"@32 # font_setColor     # フォント色(0xRRGGBB)を設定
+●フォント色取得                    ="ModuleSwf"@33 # font_getColor     # フォント色を取得
+●フォント種類設定(NAMEに|NAMEへ)   ="ModuleSwf"@34 # font_setName      # フォント種類(「_ゴシック」など)を設定
+●フォント種類取得                  ="ModuleSwf"@35 # font_getName      # フォント種類を取得
+●線太さとはアクセサ   <線太さ設定   >線太さ取得
+●線色とはアクセサ     <線色設定     >線色取得
+●塗り色とはアクセサ   <塗り色設定   >塗り色取得
+●透明度とはアクセサ   <透明度設定   >透明度取得
+●描画対象とはアクセサ <描画対象設定 >描画対象取得
+●親部品とはアクセサ   <親部品設定   >親部品取得
+●フォントサイズとはアクセサ <フォントサイズ設定 >フォントサイズ取得
+●フォント色とはアクセサ     <フォント色設定     >フォント色取得
+●フォント種類とはアクセサ   <フォント種類設定   >フォント種類取得
+#-色の名前
+定数 黒色=0x000000
+定数 赤色=0xFF0000
+定数 青色=0x0000FF
+定数 黄色=0xFFFF00
+定数 緑色=0x00FF00
+定数 紫色=0xFF00FF
+定数 水色=0x00FFFF
+定数 白色=0xFFFFFF
+
+#-画面エフェクト
+●画面ホワイトアウト(Vで) ="ModuleSwf"@150# effect_whiteout # 画面を塗り色でホワイトアウトする(Vには速度を,10が普通)
+●画面スライド(OBJ1からOBJ2へVで)="ModuleSwf"@151 # effect_slide # 画面を表す部品OBJ1からOBJ2へスライドする(Vは速度,10が普通)
+●画面スライド2(OBJ1からOBJ2へVで)="ModuleSwf"@152 # effect_slide2 # 画面を表す部品OBJ1からOBJ2へスライドする(Vは速度,10が普通,塗り色でホワイトアウト)
+
+#-部品の作成
+●ラベル作成(TEXTの|TEXTで)         ="ModuleSwf"@100# create_label      # TEXTのラベルを作成して、IDを返す
+●エディタ作成(TEXTの|TEXTで)       ="ModuleSwf"@101# create_edit       # TEXTの内容でエディタを作成して、IDを返す
+●リスト作成(ITEMSの|ITEMSで)       ="ModuleSwf"@102# create_list       # ITEMSを持つリストを作成して、IDを返す
+●スプライト作成                    ="ModuleSwf"@103# create_sprite     # スプライトを作成して、IDを返す
+●メモ作成(TEXTの|TEXTで)           ="ModuleSwf"@104# create_memo       # TEXTの内容でメモを作成して、IDを返す
+●ボタン作成(TEXTの|TEXTで)         ="ModuleSwf"@105# create_button     # TEXTのボタンを作成して、IDを返す
+●グリッド作成(ITEMSで|ITEMSの)     ="ModuleSwf"@107# create_grid       # ITEMSを持つグリッドを作成し、IDを返す
+
+#-部品に関する命令
+●作る(OBJをTYPEとして)             ="ModuleSwf"@0  # gui_create        # GUI部品を作成する
+●設定(OBJのPROPにVを|PROPへ)       ="ModuleSwf"@1  # gui_set           # GUI部品に値を設定する
+●取得(OBJのPROPを)                 ="ModuleSwf"@2  # gui_get           # GUI部品の値を取得する
+●アクティブ部品                    ="ModuleSwf"@3  # gui_getActive     # イベントを発した部品番号を返す
+●部品削除(OBJの|OBJを)             ="ModuleSwf"@5  # gui_remove        # GUI部品を削除する
+●全部品削除                        ="ModuleSwf"@6  # gui_removeAll     # 全てのGUI部品を削除する
+●最前面設定(OBJを)                 ="ModuleSwf"@7  # gui_bringToFront  # GUI部品OBJを最前面に移動する
+●センタリング(OBJを)               ="ModuleSwf"@8  # gui_setCenter     # GUI部品OBJを中央に移動する
+●衝突判定(OBJ1とOBJ2で|OBJ2が|OBJ2の)="ModuleSwf"@9# gui_hitTest       # GUI部品OBJ1とOBJ2が接触(衝突)しているか判定してはいかいいえを返す
+●マスク設定(MASKをOBJに|OBJへ)     ="ModuleSwf"@39# gui_setMask        # GUI部品MASKをGUI部品OBJにマスクとして設定する
+#-作成できるGUIの種類
+定数 ボタン     =100
+定数 エディタ   =101
+定数 ラベル     =102
+定数 リスト     =103
+定数 スプライト =104
+定数 メモ       =105
+定数 バー       =106
+定数 グリッド   =107
+定数 タートル   =108
+#-カメ使い(タートルグラフィックス)
+●カメ次郎召喚                      ="ModuleSwf"@120# create_turtle     # カメ次郎を召喚してIDを返す
+●歩進める(IDをN|IDが)              ="ModuleSwf"@121# turtle_forward    # カメ次郎IDをN歩前へ進ませる
+●度右回転(IDをN|IDが)              ="ModuleSwf"@122# turtle_right      # カメ次郎IDをN度右回転させる
+●度左回転(IDをN|IDが)              ="ModuleSwf"@123# turtle_left       # カメ次郎IDをN度左回転させる
+●カメ待機(IDを|IDの)               ="ModuleSwf"@124# turtle_wait       # カメ次郎IDの動作終了まで待機する
+#-----------------------------------------------------------------------
+#+タイマー
+#-----------------------------------------------------------------------
+#-タイマー
+●秒待つ(N)                         ="ModuleSwf"@40 # wait              # N秒待つ(ミリ秒も指定可能)
+●秒タイマー設定(EVENTにN|EVENTを|EVENTへ)="ModuleSwf"@41 # timer_set   # N秒後にEVENT関数(文字列で指定)を呼ぶタイマーを設定し、タイマーIDを得る
+●タイマー解除(IDの|IDを)           ="ModuleSwf"@42 # timer_clear       # 「秒タイマー設定」命令で得たタイマーIDを指定してタイマーを解除する
+#-----------------------------------------------------------------------
+#+拡張機能
+#-----------------------------------------------------------------------
+#-拡張機能
+●SWFLOG(N)                         ="ModuleSwf"@43 # swflog            # SWFLOG
+●FSCOMMAND(CMD,PARAMS)             ="ModuleSwf"@44 # _fscommand        # 拡張機能(fscommand)でCMDにPARAMSで呼び出す
+●FSCOMMAND2(CMD,PARAMS)            ="ModuleSwf"@45 # _fscommand2       # 拡張機能(fscommand2)でCMDにPARAMSで呼び出し、結果を返す
+#-----------------------------------------------------------------------
+#+キーボードとマウス
+#-----------------------------------------------------------------------
+#-キー・マウス
+●最後キー取得                       ="ModuleSwf"@51 # key_code          # 最後に押されたキーコードを得る
+●文字キー取得                       ="ModuleSwf"@52 # key_getascii      # 文字キーの状態を調べる
+●キー状態(KEYの)                    ="ModuleSwf"@53 # key_isdown        # KEYを押下中か状態を調べる。押されていれば1、押されてなければ0
+●キー押した時設定(EVENTに|EVENTを)  ="ModuleSwf"@57 # key_setDownEvent  # キー押した時のイベントを設定する
+●キー離した時設定(EVENTに|EVENTを)  ="ModuleSwf"@58 # key_setUpEvent    # キー離した時のイベントを設定する
+●マウスポインタ可視設定(Bに|Bへ|Bで)="ModuleSwf"@54 # mouse_setVisible  # マウスポインタを表示するか設定する
+●マウスポインタ可視取得             ="ModuleSwf"@55 # mouse_getVisible  # マウスポインタを表示するか調べて返す
+●マウスポインタ画像変更(IMAGEに)    ="ModuleSwf"@56 # mouse_changeImage # マウスポインタを表示する画像を変更する(IMAGEには画像ファイル名を指定)
+●マウスポインタとはアクセサ <マウスポインタ可視設定 >マウスポインタ可視取得
+#-キー定義
+定数 カーソル左   =37
+定数 カーソル上   =38
+定数 カーソル右   =39
+定数 カーソル下   =40
+定数 スペースキー =32
+定数 エンターキー =13
+定数 BSキー       =8
+定数 TABキー      =9
+定数 SHIFTキー    =16
+定数 CTRLキー     =17
+定数 WII上      =175
+定数 WII下      =176
+定数 WII右      =177
+定数 WII左      =178
+定数 WIIAボタン =13
+定数 WIIBボタン =171
+定数 WIIプラス  =174
+定数 WIIマイナス=170
+
+#-----------------------------------------------------------------------
+#+ネットワーク
+#-----------------------------------------------------------------------
+#-ネットワーク
+●読む(URLを|URLから)               ="ModuleSwf"@60 # net_read          # URLにあるデータを取得して返す
+●開く(URLを|URLから)               ="ModuleSwf"@60 # net_read          # URLにあるデータを取得して返す
+●読込開始(URLをEVENTで|URLからEVENTへ|EVENTに) ="ModuleSwf"@61 # net_readASync # URLにあるデータの読み込みを開始する。読み終わったらEVENT関数(文字列で指定)が呼ばれる。データは「イベントデータ」に入る。
+●イベントデータ                    ="ModuleSwf"@62 # net_getEventData  # イベントが起きたときデータが代入される
+●ポスト(URLにDATAを|URLへ)         ="ModuleSwf"@63 # net_post          # URLにデータDATA(ハッシュ形式)をポストし、サーバーからの応答を取得して返す
+●URL移動(URLに|URLへ|URLまで)      ="ModuleSwf"@64 # page_jump         # URLにページを移動する
+#-ローカル入出力
+●ローカル読む(FILEを|FILEから)     ="ModuleSwf"@80 # local_read        # ブラウザローカル領域(SharedObject)のFILEを読み込んで返す
+●ローカル開く(FILEを|FILEから)     ="ModuleSwf"@80 # local_read        # ブラウザローカル領域(SharedObject)のFILEを読み込んで返す
+●ローカル書く(FILEにVを|FILEへ)    ="ModuleSwf"@81 # local_write       # ブラウザローカル領域(SharedObject)のFILEへVを書き込む
+●ローカル保存(FILEにVを|FILEへ)    ="ModuleSwf"@81 # local_write       # ブラウザローカル領域(SharedObject)のFILEへVを書き込む
+
+#-----------------------------------------------------------------------
+#+マルチメディア
+#-----------------------------------------------------------------------
+#-MP3などの再生
+●演奏(URLを|URLで)                 ="ModuleSwf"@90 # play              # URLにある音声ファイルを演奏する
+●演奏停止                          ="ModuleSwf"@91 # stop              # 演奏を中止する
+#+Flash連携
+#-オブジェクト操作
+●値設定(OBJのPROPにVALUEを|PROPへ) ="ModuleSwf"@130# object_set        # FlashのオブジェクトOBJのプロパティPROPに値VALUEを代入する(OBJ/PROPは文字列で指定)
+●値取得(OBJのPROPから|PROPを)      ="ModuleSwf"@131# object_get        # FlashのオブジェクトOBJのプロパティPROPを取得して返す(OBJ/PROPは文字列で指定)
+●SWF実行(OBJのMETHODをARGで)       ="ModuleSwf"@132# object_call       # FlashのオブジェクトOBJのMETHODを引数ARGで呼んで結果を返す(OBJ/METHODは文字列で指定)
+#-----------------------------------------------------------------------
+#</function>
+#-----------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------
+#母艦オブジェクト番号
+母艦=0
+#-----------------------------------------------------------------------
+# 描画設定
+#-----------------------------------------------------------------------
+# <GUI部品の特殊プロパティ>
+#+位置、サイズ
+# 上, 左, X, Y, 幅, 高
+#+テキスト
+# テキスト, アイテム
+#+属性
+# 可視
+# マウスX,マウスY
+# 画像, 透明度, 角度
+#+バー
+# 値,最大値,縦向き
+#-----------------------------------------------------------------------

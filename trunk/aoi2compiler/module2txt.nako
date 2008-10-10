@@ -1,0 +1,225 @@
+#=====================================================================
+# 葵モジュール定義から説明とソースコードを自動生成する
+#=====================================================================
+TXT=""
+TSV=""
+NHS=""
+母艦パス＆「*.aoi2」のファイル列挙
+反復
+　　花瓶＝オフ
+　　F=対象
+　　E=Fから「.」まで切り取る
+　　対象を関数変換処理。
+　　もし、TXT=""ならば
+　　　　続ける
+　　#--- ソースへの変換
+　　EでTSVをソース変換処理。
+　　EでTSVをBAS変換処理。
+　　#--- 情報を保存
+　　TXTをSJIS_UTF8N変換してTXTに代入。
+　　TXTを「command-{E}.txt」へ保存。
+　　TXT=「」
+　　TSVをSJIS_UTF8N変換してTSVに代入。
+　　TSVを「{E}.tsv」へ保存。
+　　TSV＝「」
+　　E=空
+終わり。
+
+●関数変換処理（Fを）
+　　母艦＝F
+　　レベル＝1
+　　大見出し＝空
+　　小見出し＝空
+　　ＳＷＦ＝オフ
+　　ＪＡＶＡ＝オフ
+　　Fを開いて、Tに代入。
+　　TをSJIS変換して、Tに代入。
+　　Ｔで「拡張サービス」が何文字目。
+　　もし、それ＞０ならば、花瓶＝オン
+　　Ｔで「TARGET:SWF」が何文字目。
+　　もし、それ＞０ならば、ＳＷＦ＝オン
+　　Ｔで「TARGET:JAVA」が何文字目。
+　　もし、それ＞０ならば、JAVA＝オン
+　　Tの「<function>」から「</function>」まで範囲切り取る
+　　反復
+　　　　対象を英数半角変換して対象に代入。
+　　　　HEAD=MID(対象,1,4)
+　　　　もし、HEAD="#---"ならば
+　　　　　　続ける
+　　　　HEAD=MID(対象,1,2)
+　　　　# 大見出し
+　　　　もし、HEAD=「#+」ならば
+　　　　　　大見出し閉じ
+　　　　　　対象の1から2文字削除
+　　　　　　大見出し＝対象
+　　　　　　TXT=TXT&「+」&大見出し&改行
+　　　　　　続ける
+　　　　# 小見出し
+　　　　もし、HEAD=「#-」ならば
+　　　　　　小見出し閉じ
+　　　　　　対象の1から2文字削除
+　　　　　　小見出し＝対象
+　　　　　　TXT=TXT&"-"&小見出し&改行
+　　　　　　続ける
+　　　　対象＝トリム（対象）
+　　　　もし、対象＝空ならば
+　　　　　　続ける
+　　　　#---アイテム
+　　　　C=MID(対象,1,1)
+　　　　もし(C=「●」||C="*")ならば
+　　　　　　対象を命令処理
+　　　　もし、C=「定」ならば
+　　　　　　対象を定数処理
+　　　　#---
+
+●命令処理（対象を）
+　　対象の1から1文字削除
+　　DEF＝対象の「#」まで切り取って空白除去
+　　FID＝対象の「#」まで切り取って空白除去
+　　F説明＝対象の「#」まで切り取って空白除去
+　　Fプライベート＝対象の「#」まで切り取って空白除去
+　　ACC=DEFから「とは」までを切り取る
+　　もし、DEF＝「」ならば
+　　　　＃アクセサなし＝普通の命令
+　　　　DEF=ACC
+　　　　CMD=DEFから「=」まで切り取る
+　　　　F名前＝CMDから「(」まで切り取って空白除去
+　　　　F引数＝CMDから「)」まで切り取って空白除去
+　　　　DEFから「"」まで切り取る
+　　　　Fモジュール＝トリム（DEFから「"」まで切り取る）
+　　　　DEFから「@」まで切り取る
+　　　　F番号＝トリム（DEFから「#」まで切り取る）
+　　　　Fタイプ=「命令」
+　　　　TMP=F引数
+　　　　ARG=TMPの「|」まで切り取る
+　　　　ARG=ARGの「,」を「 」に置換。
+　　　　T＝ARGをトークン分割
+　　　　ARGNUM=Tの要素数
+　　　　TSV=TSV&「{F番号}	{FID}	{F名前}	{F引数}	{ARGNUM}	{F説明}	{Fプライベート}{改行}」
+　　違えば
+　　　　＃アクセサ
+　　　　F名前＝トリム（ACC）
+　　　　F引数＝「」
+　　　　Fモジュール＝「」
+　　　　F番号＝「」
+　　　　Fタイプ=「アクセサ」
+　　もし、Fプライベート＝「private」ならば
+　　　　続ける
+　　TXT=TXT&「|{F名前},"{F引数}","{F説明}",{F番号},{FID},{Fタイプ},{Fモジュール}」&改行
+
+●定数処理（対象を）
+　　# 定数 黒色=0x000000
+　　対象の「 」まで切り取る。
+　　F名前＝トリム（対象の「=」まで切り取る）
+　　F値＝トリム（対象の「#」まで切り取る）
+　　F説明＝トリム（対象の「#」まで切り取る）
+　　FID＝トリム（対象の「#」まで切り取る）
+　　F番号＝-1
+　　Fモジュール＝「」
+　　TXT=TXT&「|{F名前},"{F値}","{F説明}",{F番号},{FID},定数,{Fモジュール}」&改行
+
+●ソース変換処理（EでTSVを）
+　　S1=""
+　　S2=""
+　　J1=""
+　　J2=""
+　　J3=""
+　　TSV=TSVをTSV取得
+　　TSVの0を表数値ソート
+　　反復
+　　　　NO=対象￥０
+　　　　ID=対象￥１
+　　　　NAM=対象￥２
+　　　　ARG=対象￥３
+　　　　NUM=対象￥４
+　　　　DSC=対象￥５
+　　　　NAKOID=対象￥６
+　　　　#---
+　　　　もし(NHS[NO]=ID)ならば
+　　　　　　続ける
+　　　　NHS[NO]=ID
+　　　　#---
+　　　　S1=S1&「        // *{NAM}({ARG}){改行}」
+　　　　S1=S1&「        ftable[{NO}] = {波カッコ}func:{E}Func.{ID}, arg:{NUM}{波カッコ閉じ};{改行}」
+　　　　S2=S2&「    // *{NAM}({ARG})="{E}"@{NO} // {NUM}{改行}」
+　　　　S2=S2&「    // {DSC}{改行}」
+　　　　S2=S2&「    static function {ID}(arg:ModuleFunctionArg){改行}」
+　　　　J1=J1&「        case {NO}: {E}.{ID}(arg); break;{改行}」
+　　　　J2=J2&「        case {NO}: return {NUM};{改行}」
+　　　　J3=J3&「    // *{NAM}(ARG)@{NO} // {NUM}{改行}」
+　　　　J3=J3&「    public static void {ID}(AFunctionArg arg) 」&『{』&改行&『    }』&改行
+　　　　もし、花瓶＝オンならば
+　　　　　　S2=S2&『    {』&改行
+　　　　　　S2=S2&「        kabin_callbyid({NAKOID}, arg);」&改行
+　　　　　　S2=S2&『    }』&改行
+　　　　違えば
+　　　　　　S2=S2&『    {』&改行&『    }』&改行
+　　SRC=『// Created by module2txt.nako --- "』&E&『.aoi2"
+class 』&E&『Table
+{
+    function 』&E&『Table() {} // constructor  for [Flash IDE]
+    //--- function table
+    static function initTable(ftable:Array) {
+』&S1&『
+    }
+}
+/*
+』&S2&『
+*/
+』
+　　もし、ＳＷＦ＝オンならば
+　　　　SRC=SRCをSJIS_UTF8N変換
+　　　　SRCを「{E}Table.as」へ保存。
+　　SRC=『// Created by module2txt.nako --- 』&E&『.aoi2
+package com.aoikujira.aoi2.vm.module;
+import com.aoikujira.aoi2.vm.AFunctionArg;
+
+class 』&E&『Table
+{
+    //--- function args
+    public static int getArgCount(int id) {
+        switch (id) {
+』&J2&『
+        default: return 0;
+        }
+    }
+    //--- function table
+    public static void call(int id, AFunctionArg arg) {
+      switch (id) {
+』&J1&『
+      }
+    }
+}
+/*
+』&J3&『
+*/
+』
+　　もし、ＪＡＶＡ＝オンならば
+　　　　SRC=SRCをSJIS_UTF8N変換
+　　　　SRCを「{E}Table.java」へ保存。
+　　＃
+　　戻る
+
+●BAS変換処理（EでTSVを）
+　　S1=""
+　　S2=""
+　　TSV=TSVをTSV取得
+　　TSVの0を表数値ソート
+　　反復
+　　　　NO=対象￥０
+　　　　ID=対象￥１
+　　　　NAM=対象￥２
+　　　　ARG=対象￥３
+　　　　NUM=対象￥４
+　　　　DSC=対象￥５
+　　　　ARG=ARGの「|」までを切り取る
+　　　　「までの,とは,から,まで,を,は,で,に,の,と,して,へ,が」を「,」で区切る
+　　　　反復
+　　　　　　ARG=ARGの対象を「,」に置換
+　　　　2回
+　　　　　　ARG=ARGの「,,」を「,」に置換
+　　　　　　ARG=トリム(ARG)
+　　　　　　B=RIGHT(ARG,1)
+　　　　　　もし、B=","ならば、ARGから1文字右端削除
+　　　　S1＝S1&「function {ID}({ARG})="{E}"@{NO}」&改行
+　　S1を「{E}.bas」へ保存。

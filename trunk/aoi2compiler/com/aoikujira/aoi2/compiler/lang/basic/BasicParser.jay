@@ -1,0 +1,207 @@
+%{
+// genetated by BasicParser.jay
+package com.aoikujira.aoi2.compiler.lang.basic;
+
+import com.aoikujira.utils.*;
+import com.aoikujira.aoi2.compiler.*;
+
+import java.io.*;
+
+public class BasicParser extends Parser{
+    private BasicNodeCreator nc;
+
+%}
+
+%token <void> AND, OR, SHR, SHL, MOD
+%token <Token> EOL, INT, NUM, STR, WORD, FUNC
+%token <void> EQ, IF, THEN, ELSE, END, FOR, TO, NEXT, STEP, WHILE, WEND, 
+%token <void> FUNCTION, RETURN, SUB
+%token <void> INCLUDE, DIM, IT, BREAK, CONTINUE, CONST, FOREACH, IN
+%type <ANode> none, stmts, stmt, variable, expr, value
+%type <ANode> varparam, stmt_end, stmt_eol, let_stmt, func_stmt
+%type <ANode> if_stmt, for_stmt, while_stmt, foreach_stmt, foreach_end
+%type <ANode> if_end, for_end, while_end
+%type <ANode> expr_list, hash_list, array_list, callfunc, callfunc2
+%type <ANode> def_func, def_func_end, include_stmt, dim_stmt
+%type <Token> def_func_head, return_stmt
+%type <void> if_then, eol_none
+%type <ANode> array_list, hash_list, hash_pair
+%left OR AND
+%left EQ EQEQ GT GTEQ LT LTEQ NOTEQ
+%left '+' '-' '&'
+%left '*' '/' '%' MOD
+%right UMINUS
+%right NOT
+
+%%
+
+program : stmts        { topnode = $1; }
+
+stmts : stmt_eol
+      | stmts stmt_eol      { $$ = nc.connect($1, $2); }
+
+stmt_eol : stmt stmt_end    { $$ = nc.connect($1, $2); }
+         | none stmt_end
+
+stmt : let_stmt
+     | func_stmt
+     | if_stmt
+     | for_stmt
+     | while_stmt
+     | def_func
+     | include_stmt
+     | foreach_stmt
+     | dim_stmt
+     | BREAK        { $$ = new ANodeNop(nc.FLAG_BREAK);    }
+     | CONTINUE     { $$ = new ANodeNop(nc.FLAG_CONTINUE); }
+     | WORD error   { $$ = new ANodeNop("error"); nc.error(ErrMsg.UnknownWord + ":" + (String)$1.value); }
+     | return_stmt
+
+return_stmt : RETURN        { $$ = nc.return_node();   }
+            | RETURN expr   { $$ = nc.return_node($2); }
+
+dim_stmt : DIM WORD         { $$ = nc.localvar($2, null); }
+         | DIM WORD EQ expr { $$ = nc.localvar($2, $4);   }
+         | CONST WORD EQ expr { $$ = new ANodeNop("const"); }
+
+include_stmt : INCLUDE STR  { $$ = new ANodeNop("include_stmt"); }
+
+let_stmt : variable EQ expr  { $$ = nc.let($1, $3); }
+
+func_stmt : callfunc        { $$ = nc.addPOP($1); }
+          | callfunc2       { $$ = nc.addPOP($1); }
+
+if_stmt : IF expr if_then stmts ELSE stmts if_end      { $$ = nc.if_node($2, $4, $6);   }
+        | IF expr if_then stmts if_end                 { $$ = nc.if_node($2, $4, null); }
+
+if_then : THEN | stmt_eol
+if_end  : END
+        | END IF
+
+/* for     $1  $2       $3 $4   $5 $6   $7       $8    $9 */
+for_stmt : FOR variable EQ expr TO expr stmt_end stmts for_end
+         {  $$ = nc.for_basic($2, $4, $6, $8,null); }
+/* for2     $1  $2       $3 $4   $5 $6   $7   $8   $9       $10   $11 */
+         |  FOR variable EQ expr TO expr STEP expr stmt_end stmts for_end
+         {  $$ = nc.for_basic($2, $4, $6, $8,null); }
+         
+for_end  : END
+         | END FOR
+         | NEXT
+
+/* while     $1    $2   $3       $4    $5 */
+while_stmt : WHILE expr stmt_end stmts while_end
+           { $$ = nc.while_node($2, $4); }
+while_end : END
+          | END WHILE
+          | WEND
+
+/* foreach     $1      $2       $3 $4   $5       $6    $7 */
+foreach_stmt : FOREACH variable IN expr stmt_end stmts foreach_end
+             { $$ = nc.foreach_node($2, $4, $6); }
+             | FOR variable IN expr stmt_end stmts for_end
+             { $$ = nc.foreach_node($2, $4, $6); }
+
+foreach_end : END
+            | END FOREACH
+            | NEXT
+
+def_func : def_func_head stmts def_func_end     { $$ = nc.registerFunc($1, $2); }
+         | def_func_head EQ STR '@' INT         { $$ = new ANodeNop("def_lib"); }
+
+def_func_head : FUNCTION FUNC                   { $$ = nc.registerFuncHeader($2); }
+              | FUNCTION FUNC '(' expr_list ')' { $$ = nc.registerFuncHeader($2); }
+              | FUNCTION FUNC '(' ')'           { $$ = nc.registerFuncHeader($2); }
+              | SUB      FUNC                   { $$ = nc.registerFuncHeader($2); }
+              | SUB      FUNC '(' expr_list ')' { $$ = nc.registerFuncHeader($2); }
+              | SUB      FUNC '(' ')'           { $$ = nc.registerFuncHeader($2); }
+
+def_func_end : END
+             | END FUNCTION
+
+variable : WORD                 { $$ = nc.getVariable($1); }
+         | IT                   { $$ = nc.it(); }
+         | variable varparam    { $$ = nc.getHash($1, $2); }
+
+varparam : '[' expr ']'         { $$ = $2; }
+
+/* same as AOIParser */
+expr    : value
+        | expr '*' expr         { $$ = nc.expr(ANodeTypes.MUL,  $1, $3); }
+        | expr '/' expr         { $$ = nc.expr(ANodeTypes.DIV,  $1, $3); }
+        | expr '%' expr         { $$ = nc.expr(ANodeTypes.MOD,  $1, $3); }
+        | expr MOD expr         { $$ = nc.expr(ANodeTypes.MOD,  $1, $3); }
+        | expr '+' expr         { $$ = nc.expr(ANodeTypes.ADD,  $1, $3); }
+        | expr '-' expr         { $$ = nc.expr(ANodeTypes.SUB,  $1, $3); }
+        | expr '&' expr         { $$ = nc.expr(ANodeTypes.ADDSTR,$1,$3); }
+        | expr EQ    expr       { $$ = nc.expr(ANodeTypes.EQEQ, $1, $3); }
+        | expr GT    expr       { $$ = nc.expr(ANodeTypes.GT,   $1, $3); }
+        | expr GTEQ  expr       { $$ = nc.expr(ANodeTypes.GTEQ, $1, $3); }
+        | expr LT    expr       { $$ = nc.expr(ANodeTypes.LT,   $1, $3); }
+        | expr LTEQ  expr       { $$ = nc.expr(ANodeTypes.LTEQ, $1, $3); }
+        | expr EQEQ  expr       { $$ = nc.expr(ANodeTypes.EQEQ, $1, $3); }
+        | expr NOTEQ expr       { $$ = nc.expr(ANodeTypes.NOTEQ,$1, $3); }
+        | expr OR  expr         { $$ = nc.expr(ANodeTypes.OR, $1, $3); }
+        | expr AND expr         { $$ = nc.expr(ANodeTypes.AND,$1, $3); }
+        | NOT expr              { $$ = nc.not($2); }
+        | UMINUS value          { $$ = nc.uminus($2); }
+
+value : NUM                 { $$ = nc.constNum($1); }
+      | STR                 { $$ = nc.constStr($1); }
+      | INT                 { $$ = nc.constInt($1); }
+      | '(' expr ')'        { $$ = $2; }
+      | '[' array_list ']'  { $$ = nc.array_list_end($2); }
+      | '{' hash_list '}'   { $$ = nc.hash_list_end($2); }
+      | '[' ']'             { $$ = nc.constNull(); }
+      | '{' '}'             { $$ = nc.constNull(); }
+      | variable
+      | callfunc
+      
+array_list  : expr                          { $$ = nc.array_list_begin($1); }
+            | array_list ',' eol_none expr  { $$ = nc.array_list_append($1, $4); }
+            ;
+hash_list   : hash_pair                         { $$ = nc.hash_list_begin($1); }
+            | hash_list ',' eol_none hash_pair  { $$ = nc.hash_list_append($1, $4); }
+            ;
+hash_pair   : WORD ':' expr { $$ = nc.hash_list_pair($1, $3); }
+            | STR  ':' expr { $$ = nc.hash_list_pair($1, $3); }
+            ;
+expr_list   : expr                  { $$ = nc.expr_list_top($1); }
+            | expr_list ',' expr    { $$ = nc.expr_list_next($1, $3); }
+            ;
+               
+callfunc : FUNC '(' expr_list ')'   { $$ = nc.callFunc($1, $3);  }
+         | FUNC                     { $$ = nc.callFunc($1,null); }
+         | FUNC '(' ')'             { $$ = nc.callFunc($1,null); }
+
+callfunc2 : FUNC expr_list          { $$ = nc.callFunc($1, $2); }
+
+stmt_end : EOL                      { $$ = nc.EOL($1); }
+         | ':'                      { $$ = new ANodeNop(":"); }
+         | ';'                      { $$ = new ANodeNop(";"); }
+
+eol_none : EOL
+         | none
+
+none : /**/ { $$ = new ANode(ANodeTypes.NOP); }
+
+%%
+
+    public BasicParser(GlobalObject global) {
+        super(global);
+        nc = new BasicNodeCreator(this);
+    }
+    public Object parse(Scanner scanner) throws AOICException{
+        try {
+            
+            return yyparse((BasicScanner)scanner);
+            
+        } catch (yyException e) {
+            throw new AOICException(scanner.reportCur() + ":" + e);
+        } catch (java.io.IOException e) {
+            throw new AOICException(scanner.reportCur() + ":" + e);
+        }
+    }
+
+}
+
