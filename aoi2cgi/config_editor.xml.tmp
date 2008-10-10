@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<section id="path">
+		<key id="base" value="[[BASE_PATH_URL]]" />
+	</section>
+	<section id="api">
+		<key id="files" value="cgi/cmd_files.php"/>
+		<key id="loadSource" value="cgi/cmd_loadSource.php"/>
+		<key id="removeFile" value="cgi/cmd_remove.php"/>
+	</section>
+	<section id="lang">
+		<key id="type" value="ja"/>
+	</section>
+</config>
+

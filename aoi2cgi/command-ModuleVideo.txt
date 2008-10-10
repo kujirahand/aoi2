@@ -1,0 +1,10 @@
++動画・カメラ
+-動画再生
+|動画再生,"URLの|URLを","URLの動画を再生する",1,video_play,命令,ModuleVideo
+|動画停止,"","再生中の動画を停止する",2,video_stop,命令,ModuleVideo
+|動画繰り返し再生,"URLの|URLを","URLの動画を繰り返し再生する",3,video_playLoop,命令,ModuleVideo
+|動画サイズ設定,"X,Y,W,Hに|Hで","動画プレイヤーのサイズを設定する",4,video_setRect,命令,ModuleVideo
+|動画クリア,"","再生中の動画を停止する",5,video_clear,命令,ModuleVideo
+-ローカルカメラ
+|カメラ表示,"","ローカルカメラを表示する",20,camera_show,命令,ModuleVideo
+|カメラモーション設定,"EVENTにLEVELの|EVENTへ","カメラ画像の切り替わり時に実行するイベントEVENTをLEVEL(0-100)で設定する",21,camera_setMotion,命令,ModuleVideo
