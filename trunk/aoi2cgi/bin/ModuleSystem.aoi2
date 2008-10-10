@@ -1,0 +1,151 @@
+#-----------------------------------------------------------------------
+# ModuleSystem.aoi2
+#-----------------------------------------------------------------------
+# 基本命令定義
+#-----------------------------------------------------------------------
+#TARGET:JAVA, TARGET:SWF
+#<function>
+#-----------------------------------------------------------------------
+#+基本的な機能
+#-----------------------------------------------------------------------
+#-基本定数
+定数　オン＝１
+定数　オフ＝０
+定数　はい＝１
+定数　いいえ＝０
+定数　空＝「」
+定数　タブ＝「\t」
+定数　改行＝「\n」
+定数　PI＝3.141592
+#-----------------------------------------------------------------------
+#-基本命令
+●終わる()="ModuleSystem"@0 # quit #プログラムの実行を終了する
+●終了()="ModuleSystem"@0 # quit #プログラムの実行を終了する
+●実行環境()="ModuleSystem"@1 # platform #実行環境の種類を返す
+●葵バージョン()="ModuleSystem"@2 # vm_version #葵のバージョンを返す
+●描画処理反映()="ModuleSystem"@3 # reflesh #描画を促す
+●代入(EをVARに|EからVARへ)="ModuleSystem"@4 # let #代入を行う。VARの値をEに書き換える。
+●TYPEOF(E)="ModuleSystem"@5 # _typeof #値Eの型を返す
+#-----------------------------------------------------------------------
+#-型変換
+●INT(V)="ModuleSystem"@80 # cint #整数型に変換して返す
+●STR(V)="ModuleSystem"@81 # cstr #文字列に変換して返す
+●NUM(V)="ModuleSystem"@82 # cnum #数値型に変換して返す
+#-----------------------------------------------------------------------
+#+文字列操作
+#-----------------------------------------------------------------------
+#-文字列操作
+●文字数(Sの)="ModuleSystem"@10 # str_length #Sの文字数を返す
+●検索(SからAを|Sで|Sの)="ModuleSystem"@11 # str_indexof #文字列Sから検索文字列Aを検索してその位置を返す(見つからないと0を返す)
+●文字列検索(SからAを|Sで|Sの)="ModuleSystem"@11 # str_indexof #文字列Sから検索文字列Aを検索してその位置を返す(見つからないと0を返す)
+●置換(SのAをBに|SでAからBへ)="ModuleSystem"@12 # str_replace #文字列Sの検索文字列Aを置換文字列Bに置換して返す
+●文字置換(SのAをBに|SでAからBへ)="ModuleSystem"@12 # str_replace #文字列Sの検索文字列Aを置換文字列Bに置換して返す
+●文字コード取得(Sの)="ModuleSystem"@13 # asc #文字列Sの1文字目の文字コードを返す
+●ASC(S)="ModuleSystem"@13 # asc #文字列Sの1文字目の文字コードを返す
+●文字コード変換(Vの)="ModuleSystem"@14 # chr #文字コードVに対応した文字を返す
+●CHR(V)="ModuleSystem"@14 # chr #文字コードVに対応した文字を返す
+●文字挿入(SのIにAを|Sで)="ModuleSystem"@15 # str_insert #文字列SのI文字目にAを挿入して返す
+●文字削除(SのIからCNT|Sで)="ModuleSystem"@16 # str_delete #文字列SのI文字目からCNT文字削除して返す
+●文字抜き出す(SのIからCNT|Sで)="ModuleSystem"@17 # str_mid #文字列SのI文字目からCNT文字を抜き出して返す
+●文字左部分(SのCNT|Sから)="ModuleSystem"@18 # str_left #文字列Sの左からCNT文字を抜き出して返す
+●文字右部分(SのCNT|Sから)="ModuleSystem"@19 # str_right #文字列Sの右からCNT文字を抜き出して返す
+●切り取る(SからAまで|SのAまでを)="ModuleSystem"@20 # str_getToken #文字列Sから区切り文字列Aまでを切り取って返す(Sの内容を変更する)
+●区切る(SをAで|Sの)="ModuleSystem"@21 # str_split #文字列Sを区切り文字Aで区切って配列変数として返す
+●単置換(SのAをBに|Sから|Sで)="ModuleSystem"@22 # str_replaceOne #文字列Sで検索文字列Aを置換文字列Bで最初の1つを置換して返す
+●空白除去(Sを|Sの|Sから|Sで)="ModuleSystem"@23 # str_trim #文字列Sの前後の空白を除去して返す
+●トリム(Sを|Sの|Sから|Sで)="ModuleSystem"@23 # str_trim #文字列Sの前後の空白を除去して返す
+●通貨形式(Vを|Vの)="ModuleSystem"@24 # format_yen #通貨書式(3桁カンマ区切り)にして返す
+●ゼロ埋め(VをCNTで|VへCNTの)="ModuleSystem"@25 # format_zero #VをCNT桁の0で埋めて返す
+
+#-----------------------------------------------------------------------
+#+日付時間
+#-----------------------------------------------------------------------
+#-日付命令
+●システム時間()="ModuleSystem"@30 # time_system #1970-1-1からのミリ秒を返す
+●今日()="ModuleSystem"@31 # date_today #今日の日付をyyyy-mm-ddの形式で返す
+●今()="ModuleSystem"@32 # time_now #今の時間をhh:nn:ssの形式で返す
+●日付加算(SにAを|Sへ)="ModuleSystem"@33 # date_add #日付SにAを加算して返す。日付は「yyyy-mm-dd」の形式で指定。減算するときは「-yyy-mm-dd」と指定
+●時間加算(SにAを|Sへ)="ModuleSystem"@34 # time_add #時間SにAを加算して返す。時間は「hh:nn:ss」の形式で指定。減算するときは「-hh:nn:ss」と指定
+●日数差(SとAの|SからAまでの)="ModuleSystem"@35 # date_sub #日付SからAまでの日数差を返す。日付は「yyyy-mm-dd」の形式で指定。
+●秒差(SとAの|SからAまでの)="ModuleSystem"@36 # time_sub #時間SからAまでの時間差を返す。時間は「hh:nn:ss」の形式で指定。
+#-----------------------------------------------------------------------
+#+配列・ハッシュ操作
+#-----------------------------------------------------------------------
+#-ハッシュ変数操作
+●要素数(Aの)="ModuleSystem"@40 # count #配列変数Aに含まれる値の数を返す
+●ハッシュキー列挙(Sから|Sの)="ModuleSystem"@41 # hash_keys #配列変数Sのキーを配列形式で返す
+●ハッシュ値列挙(Sから|Sの)="ModuleSystem"@42 # hash_values #文字列Sから検索文字列Aを検索してその番号を返す
+#-----------------------------------------------------------------------
+#-配列変数操作
+●配列追加(AにSを|Aへ)="ModuleSystem"@50 # array_add #配列Aに値Sを追加して返す(配列A自身に変更)
+●配列削除(AからIを|Aの)="ModuleSystem"@51 # array_delete #配列AのI番目を削除して返す(配列A自身を変更)
+●配列挿入(AのIへSを|Iに)="ModuleSystem"@52 # array_insert #配列Aの要素I番に値Sを挿入して返す(配列A自身を変更)
+●配列要素数(Aの)="ModuleSystem"@53 # array_count #配列変数Aに含まれる値の数を返す
+●配列検索(AのIからKEYを|Aで)="ModuleSystem"@54 # array_indexof #配列Aの要素I番からKEYを検索してそのインデックス番号を返す。見つからなければ0を返す
+●配列一括挿入(AのIへBを|Iに)="ModuleSystem"@55 # array_insertArray #配列Aの要素I番に配列変数Bを挿入して返す(配列A自身を変更)
+●配列数値ソート(Aを|Aの)="ModuleSystem"@56 # array_sortNum #配列Aを数値順にソートして返す(配列A自身を変更)
+●配列ソート(Aを|Aの)="ModuleSystem"@57 # array_sortStr #配列Aを文字列順にソートして返す(配列A自身を変更)
+●配列逆順(Aの|Aを)="ModuleSystem"@58 # array_reverse #配列Aの要素を逆さまにして返す(配列A自身を変更)
+●配列結合(AをSで)="ModuleSystem"@59 # array_join #配列変数Aを文字列Sを区切りとして結合させて返す
+●配列連結(AをSで)="ModuleSystem"@60 # array_join #配列変数Aを文字列Sを区切りとして連結させて返す(A[0] s a[1] s a[2]..)
+●配列シャッフル(Aの|Aを)="ModuleSystem"@61 # array_random #配列Aの要素をランダムに入れ替えて返す(配列A自身を変更)
+#-----------------------------------------------------------------------
+#-CSV操作
+●CSV取得(Sを|Sから)="ModuleSystem"@62 # csv_toArray #CSV形式の文字列データを二次元配列に変換して返す。
+●表ピックアップ(AのIからVを)="ModuleSystem"@63 # csv_pickup #二次元配列AのI列目(0起点)からVに合致する行を二次元配列変数の形式で返す。
+●表数値ピックアップ(AのIからVをRANGEで)="ModuleSystem"@64 # csv_pickupNum #二次元配列AのI列目(0起点)からVの前後RANGE以内に合致する行を二次元配列変数の形式で返す。
+#-----------------------------------------------------------------------
+#+ダイアログ
+#-----------------------------------------------------------------------
+#-ダイアログ
+●言う(Sを|Sと|Sで|Sの)="ModuleSystem"@70 # dialog_say #ダイアログに文字列Sを表示して待機する
+●尋ねる(Sと|Sで|Sの|Sを)="ModuleSystem"@71 # dialog_input #一行入力ダイアログに質問Sを表示して待機し、入力結果を返す
+●二択(Sと|Sで|Sの|Sを)="ModuleSystem"@72 # dialog_yesno #はい/いいえで答えるダイアログと質問Sを表示して待機し、結果を返す
+#-----------------------------------------------------------------------
+#+数学関数
+#-----------------------------------------------------------------------
+#-数学関数
+●TRUNC(V)="ModuleSystem"@100 # trunc #小数点以下を切り捨てて返す
+●切捨て(Vを)="ModuleSystem"@100 # trunc #小数点以下を切り捨てて返す
+●ROUND(V)="ModuleSystem"@101 # round #小数点以下を丸めて返す
+●四捨五入(VをKで)="ModuleSystem"@102 # sisyagonyu #数値VをKの桁で四捨五入して返す(1,10,100のように指定する)
+●ABS(V)="ModuleSystem"@103 # abs #絶対値を返す
+●絶対値(Vの)="ModuleSystem"@103 # abs #絶対値を返す
+●SIN(V)="ModuleSystem"@104 # sin #SINを返す
+●COS(V)="ModuleSystem"@105 # cos #COSを返す
+●TAN(V)="ModuleSystem"@106 # tan #TANを返す
+●ASIN(V)="ModuleSystem"@107 # asin #ASINを返す
+●ACOS(V)="ModuleSystem"@108 # acos #ACOSを返す
+●ATAN(V)="ModuleSystem"@109 # atan #ATANを返す
+●SQRT(V)="ModuleSystem"@110 # sqrt #SQRTを返す
+●EXP(V)="ModuleSystem"@111 # exp #EXPを返す
+●LOG(V)="ModuleSystem"@112 # log #LOGを返す
+●乱数(Vの)="ModuleSystem"@113 # random #(0からV-1まで)の乱数を返す
+●乱数範囲(AからBの|Bまでの)="ModuleSystem"@114 # random_range #(AからBまで)の乱数を返す
+●サイコロ振る(Nの)="ModuleSystem"@115 # dice #Nの目のサイコロを振って返す。(1からNまで)の乱数を返す
+#-基本演算
+●掛ける(AにBを|Aへ)="ModuleSystem"@130 # mul # 値Aに値Bを掛けて返す
+●割る(AをBで)="ModuleSystem"@131 # div # 値Aを値Bで割って返す
+●割った余り(AをBで)="ModuleSystem"@132 # calc_mod # 値Aを値Bで割った余りを返す
+●余り(AとBの)="ModuleSystem"@132 # calc_mod # 値Aを値Bで割った余りを返す
+●足す(AにBを|AとBを|Aへ)="ModuleSystem"@133 # add # 値Aに値Bを足した値を返す(Aを変更しない)
+●引く(AからBを)="ModuleSystem"@134 # calc_sub # 値Aから値Bを引いた値を返す(Aを変更しない)
+●直接足す(AにBを|AとBを|Aへ)="ModuleSystem"@135 # inc # 値Aに値Bを足した値を返す(Aを変更する)
+●直接引く(AにBを|AとBを|Aへ)="ModuleSystem"@136 # dec # 値Aから値Bを引いた値を返す(Aを変更する)
+●等しい(AとBが)="ModuleSystem"@137 # comp_eq # 値Aと値Bが等しければ１を違えば０を返す
+●以上(AがB)="ModuleSystem"@138 # comp_gteq # 値Aが値B以上なら１違えば０を返す
+●以下(AがB)="ModuleSystem"@139 # comp_lteq # 値Aが値B以下なら１違えば０を返す
+●超(AがB)="ModuleSystem"@140 # comp_gt # 値Aが値B超なら１違えば０を返す
+●未満(AがB)="ModuleSystem"@141 # comp_lt # 値Aが値B未満なら１違えば０を返す
+●文字列等しい(AとBが|Bの)="ModuleSystem"@142 # comp_str_eq # 文字列AとBが等しければ１を違えば０を返す
+#-----------------------------------------------------------------------
+#+XML
+#-----------------------------------------------------------------------
+#-XML
+●XMLハッシュ変換(Sを|Sの|Sから)="ModuleSystem"@150 # xml_toHash # XML文字列をハッシュに変更する
+
+#-----------------------------------------------------------------------
+#</function>
+#-----------------------------------------------------------------------
+
+

@@ -1,0 +1,471 @@
+﻿<html lang="ja">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+  <title>葵2エディタ</title>
+  <script type="text/javascript"><!--
+  var file_editor_swf = "AppEditor.swf?ver=1003&tm="+new Date().getTime();
+  var file_aoivm_swf  = "webparts/aoivm.swf?ver=1003&tm="+new Date().getTime();
+  //-->
+  </script>
+  <script type="text/javascript" src="./config_cgi.js?ver=1002"></script>
+  <script type="text/javascript" src="./webparts/benri.js?ver=1003b"></script>
+  <script type="text/javascript" src="./webparts/swfobject.js"></script>
+  <style type="text/css"><!--
+  .loading {
+    color: #000033; background-color: #FFF0F0;
+    padding:16px; font-weight:bold;
+  }
+  .mark {
+    color: #000000; background-color: #FFCCCC;
+  }
+  .head {
+    width:630;
+    font-size:12px;
+    padding: 5px;
+    margin: 0px;
+    text-align: right;
+  }
+  --></style>
+</head>
+
+<body bgcolor="#F0F0FF" onload='setTimeout("load_obj()", 300)'>
+
+<!-- description -->
+<div id="desc">
+  <center>
+  <small>Webブラウザ上で「葵2」の開発ができるエディタです。
+  （実行には、<a href="http://java.com/ja/">Java(JRE)</a>と
+    <a href="http://www.adobe.com/go/getflashplayer_jp">Flash Player9以降</a> が必要です。）<br><br>
+  </small>
+  </center>
+</div>
+<!-- header -->
+<center>
+<div id="header" class="head">
+[ <a href="http://aoi-project.com/">葵</a> ]&nbsp;
+[ <a href="http://aoi-project.com/wiki/aoi2/index.php">マニュアル</a> ]&nbsp;
+[ <a href="http://aoi-project.com/wiki/aoi2/index.php?%B0%AAWeb%A5%A8%A5%C7%A5%A3%A5%BF">ヘルプ</a> ]
+</div>
+</center>
+<!-- compiler -->
+<center>
+<div id="compiler">
+  <div class="loading">葵コンパイラを読み込み中です。しばらくお待ちください。</div>
+</div>
+
+<div id="editor_div"></div>
+<div id="msg" class="mark"></div>
+<br>
+
+
+<!-- swf -->
+<div id="swf" style="text-align:center"><center>
+<table width=640 height=400 bgcolor="#DDDDDD"><tr><td align="center" valign="middle">
+実行するとここに結果が表示されます。
+</td></tr></table>
+</center></div>
+
+
+<!-- frmSave -->
+<div id="frmSave" style="margin:8px;">
+  <table bgcolor="#E0E0E0" cellspacing="8" width=640>
+  <tr><th colspan="2" align="center"><u>ファイルの保存</u></th></tr>
+  <tr><td align="right">ID</td>
+  <td><input type="text" id="save_id" value="0" readonly>
+  </td></tr>
+  <tr><td align="right">作者名</td>
+  <td><input type="text" id="save_user_name">
+  </td></tr>
+  <tr><td align="right">タイトル</td>
+  <td><input type="text" id="save_filename">&nbsp;
+      <input type="text" id="lang" value=".aoi" readonly size=4>
+  </td></tr>
+  <tr><td align="right">パスワード</td>
+  <td><input type="password" id="save_password"></td></tr>
+  <tr><td align="right">公開設定</td>
+  <td><input type="checkbox" id="save_pub" value=1>公開する
+  </td></tr>
+  <tr><td></td>
+  <td><div id="save_buttons">
+       <input type="button" id="save_submit" value="上書き保存"
+             onclick="save_onClick()">&nbsp;&nbsp;&nbsp;
+      <input type="button" id="save_new_submit" value="新規保存"
+             onclick="save_new_onClick()">
+  </div></td></tr>
+  </table>
+
+  <!-- blog -->
+  <div id="save_msg" class="mark"></div>
+  <div id="frmBlog">
+    <table bgcolor="#E0E0E0" cellspacing="8" width=640>
+    <tr><td colspan="2" align="center"><hr>このプログラムへのリンク</td></tr>
+    <tr><td align="right">閲覧用URL:</td>
+    <td><input type="text" id="proglink" size=50  onclick="this.select()"/>
+    <small><span id="proglink2"><span></small>
+    </td></tr>
+    <tr><td align="right">ブログタグ(中):</td>
+    <td><input type="text" id="blog" size=50 onclick="this.select()"/>
+    <small>　※Flashが貼れるブログ</small></td></tr>
+    <tr><td align="right">ブログタグ(小):</td>
+    <td><input type="text" id="blog320x200" size=50 onclick="this.select()"/>
+    </td></tr>
+    <tr><td align="right">リンク:</td>
+    <td><input type="text" id="bloglink" size=50  onclick="this.select()"/><small>　※全てのブログでOK</small><br>
+    <tr><td align="right">その他:</td>
+    <td><a href="javascript:more_btn_click()">→詳細情報の表示</a></td></tr>
+    </td></tr></table>
+  </div>
+</div>
+
+<!-- form -->
+<div id="old_editor">
+    <textarea id="src" rows=8 cols=60></textarea><br>
+    <input type="button" value="プログラム実行" onclick="javascript:aoi_compile()" id="run_btn"><br>
+</div>
+<div id="ircode">
+    SWFのURL:<br>
+    <input type="text" id="blogswfurl" size=50 onclick="this.select()"/><br>
+	中間コード:<br>
+    <textarea id="ir" rows=4 cols=60></textarea><br>
+    埋め込みJavaScript版のタグ:<br>
+    <textarea id="irjs" rows=8 cols=60></textarea>
+</div>
+</center>
+
+<!-- script -->
+<script type="text/javascript"><!--
+// -------------------------------------------------------------------
+// initialization
+// -------------------------------------------------------------------
+Benri.close('frmSave');
+
+// -------------------------------------------------------------------
+// show editor
+// -------------------------------------------------------------------
+function load_obj() {
+  setTimeout(load_compiler, 100);
+}
+
+function load_compiler() {
+  Benri.writeApplet('compiler', 'aoi2', 800, 32,
+    './bin', 'com.aoikujira.aoi2.applet.AppletMain.class',
+    'aoi2compiler.jar');
+  setTimeout(load_editor, 300);
+}
+
+function load_editor() {
+  var edi = new SWFObject(file_editor_swf, "editor_swf", "800", "500", "9", "white");//
+  edi.addParam("allowFullScreen", "true");
+  edi.addParam("scaleMode", "noScale");
+  edi.write("editor_div");//
+  
+  if (!debug_editor) {
+    Benri.close('ircode');
+  }
+  
+  var oed = $('old_editor');
+  if (!debug_editor) {
+    oed.style.position = "absolute";
+    oed.style.height = 1;
+    Benri.hide(oed);
+  }
+  
+}
+
+// -------------------------------------------------------------------
+// swf to form (callback)
+// -------------------------------------------------------------------
+function setTextValue(file_id, filename, source, public_attr, user_name) {
+    $("src").value     = source;
+    $("save_id").value = file_id;
+    $("save_filename").value = filename;
+    if (public_attr) {
+      $("save_pub").selectedIndex = public_attr;
+    }
+    $("save_password").value = "";
+    $("save_user_name").value = user_name;
+}
+
+// -------------------------------------------------------------------
+// compile
+// -------------------------------------------------------------------
+function aoic_setArgs(args_obj) { // public
+  var chk = function (id, tag) {
+    if (args_obj[tag] != undefined) {
+      if (tag=="source") { args_obj[tag] = unescape(args_obj[tag]); }
+      $(id).value = args_obj[tag];
+    }
+  };
+  //
+  chk('save_id','file_id');
+  chk('src', 'source');
+  chk('save_filename', 'filename');
+  chk('save_user_name', 'user_name');
+  chk('save_pub', 'public_attr');
+  chk('lang', 'lang');
+  //
+  $('save_password').value = '';
+}
+
+function aoic_compile() { // public
+  aoi_compile();
+}
+
+var aoic_tid = 0;
+function aoic_timer(f, interval) {
+  if (aoic_tid) {
+    clearInterval(aoic_tid);
+  }
+  aoic_tid = setInterval(f, interval);
+}
+function aoic_timer_off() {
+  clearInterval(aoic_tid);
+}
+
+function aoi_compile() {
+  aoi2_o = $("aoi2");
+  src_o  = $("src");
+  desc_o = $("desc");
+  if (!aoi2_o) { alert('Applet not found');  return; }
+  if (!src_o)  { alert('id=src  not found'); return; }
+  if (!desc_o) { alert('id=desc not found'); return; }
+  desc_o.innerHTML = "";
+  compile1();
+}
+function compile1() {
+  Benri.open('msg');
+  $("msg").innerHTML = "<b>コンパイルしています。</b>";
+  aoic_timer(compile2_main, 300);
+}
+
+function compile2_main() {
+  aoic_timer_off();
+  var s;
+  if ($F('lang') == ".aoi") {
+     s = "「ModuleSwf.aoi2」を取り込む。\n" + 
+         "「ModuleVideo.aoi2」を取り込む。\n" +
+         $F('src');
+  }
+  else if ($F('lang') == ".bas") {
+     s = 'include "ModuleSystem.bas"' + "\n" + 
+         'include "ModuleSwf.bas"' + "\n" + 
+         $F('src');
+  }
+  var res;
+  try {
+    res = $('aoi2').compileAOI(s, $F('lang'), debug_compiler);
+  } catch(e) {
+    res = "[ERROR]" + e; 
+  }
+  $("ir").value = res;
+  if (res.indexOf("[ERROR]") >= 0) {
+    $("msg").innerHTML = "<pre>" + res + "</pre>";
+    compile_err();
+    return;
+  } else {
+    $("msg").innerHTML = "<b>実行しています。</b>";
+  }
+  res = encodeURIComponent(res);
+  var swf = new SWFObject(file_aoivm_swf, "aoivm", 
+                          "640", "400", "7", "white");//
+  swf.addVariable("mainsource", res);//
+  swf.addVariable("library_path", "webparts");//
+  swf.write("swf");//
+  aoic_timer(compile3, 300);
+}
+
+function compile3() {
+  aoic_timer_off();
+  $("msg").innerHTML = "";
+  Benri.close($("msg"));
+  Benri.open($("frmSave"));
+  showBlogCode();
+}
+
+function compile_err() {
+}
+
+// -------------------------------------------------------------------
+// setBlogCode
+// -------------------------------------------------------------------
+function showBlogCode() {
+  file_id = $("save_id").value;
+  if (file_id > 0) {
+    setBlogCode( file_id );
+  }
+  else {
+    Benri.close($("frmBlog"));
+  }
+}
+
+function setBlogCode(file_id) {
+  // check file_id
+  if (!file_id) {
+    Benri.close('frmBlog');
+    return;
+  }
+  Benri.open('frmBlog');
+  var pub = $F('save_pub');
+  // check public_attr
+  if (!pub) {
+    Benri.close("frmBlog");
+    return;
+  }
+  //---
+  // create blog-tag
+  var codeUrl = baseUrl + "v/" + file_id; // redirect
+  var code = '<object width="640" height="400">' +
+             '<param name="movie" value="' + codeUrl + '"></param>' +
+             '<param name="wmode" value="transparent"></param>' +
+             '<embed src="' + codeUrl + '" ' +
+             'type="application/x-shockwave-flash" ' +
+             'wmode="transparent" width="640" height="400">' +
+             '</embed></object>';
+  var code_mini = '<object width="320" height="200">' +
+             '<param name="movie" value="' + codeUrl + '"></param>' +
+             '<param name="wmode" value="transparent"></param>' +
+             '<embed src="' + codeUrl + '" ' +
+             'type="application/x-shockwave-flash" ' +
+             'wmode="transparent" width="320" height="200">' +
+             '</embed></object>';
+  //---
+  // create show url
+  var title = $("save_filename").value;
+  var prog = baseUrl + "aoi2show.php?file_id=" + file_id;
+  var blogcode = '<a href="' + prog + '">→「' + title + '」を見る</a>';
+  $("proglink").value = prog;
+  $("proglink2").innerHTML = "<a href='"+prog+"' target='_new'>→見る</a>";
+  $("blog").value = code;
+  $("blog320x200").value = code_mini;
+  $("bloglink").value = blogcode;
+  $("blogswfurl").value = codeUrl;
+}
+
+// -------------------------------------------------------------------
+// save
+// -------------------------------------------------------------------
+
+function fesc(name) { return encodeURIComponent($(name).value); }
+
+function save_new_onClick() {
+  var b = confirm('新規ファイルとして保存しますか？');
+  if (b) {
+    $('save_id').value = 0;
+  }
+  save_onClick();
+}
+
+function save_onClick() {
+  // check
+  if ($('save_filename').value == "") { alert("タイトルがありません。"); return; }
+  // submit
+  Benri.close("save_buttons");
+  var url = cgiUrl + "cmd_saveFile.php";
+  var pub = $("save_pub");
+  var params = "encoding=utf8";
+  params += "&file_id="     + fesc("save_id");
+  params += "&filename="    + fesc("save_filename");
+  params += "&password="    + fesc("save_password");
+  params += "&public_attr=" + fesc("save_pub");
+  params += "&source="      + fesc("src");
+  params += "&ircode="      + fesc("ir");
+  params += "&lang="        + fesc("lang");
+  params += "&user_name="   + fesc("save_user_name");
+  var req = new KHttp();
+  req.onComplete = save_onComplete;
+  req.onError = function(err,code) { alert('保存失敗:' + err); }
+  req.params_str = params;
+  req.send(url, "POST");
+}
+
+function save_onComplete(json) {
+  Benri.open("frmSave");
+  Benri.open("save_buttons");
+  Benri.open("save_msg");
+  var obj;
+  eval("obj="+json+";");
+  if (obj["result"]) {
+    $("save_msg").innerHTML = "保存しました。";
+    $("save_id").value = obj["file_id"];
+  } else {
+    if (obj.message == "wrong password") {
+        obj.message = "パスワードが違います。";
+    }
+    $("save_msg").innerHTML = "<font color='red'><b>" +
+                              "保存できませんでした。理由は、" + 
+                              obj.message + "</b></font>";
+  }
+  // chage editor title
+  var file_id = obj["file_id"];
+  var file_info = {
+    file_id: obj["file_id"],
+    filename: $F('save_filename'),
+    password: $F('save_password'),
+    public_attr: $F('save_pub')
+  };
+  var swf = $("editor_swf");
+  swf.editor_setArgs(file_info);
+  
+  // show blog
+  if ($F('save_pub')) {
+    Benri.open($("frmBlog"));
+    setBlogCode(file_id);
+  }
+  
+  // clear
+  setTimeout(save_onComplete_clear, 3000);
+}
+
+function save_onComplete_clear() {
+  Benri.close($("save_msg"));
+}
+
+function str_replace(s,a,b) {
+  return s.split(a).join(b);
+}
+
+function more_btn_click() {
+  file_id = $("save_id").value;
+  if (file_id <= 0) {
+    alert('先に保存する必要があります');
+    return;
+  }
+  Benri.open('ircode');
+  var ir_txt   = $F('ir');
+  var irjs_obj = $('irjs');
+  var temp     = $('template_irjs').innerHTML;
+  // JavaScript埋め込み版の作成
+  ir_txt = str_replace(ir_txt, "\r", "");
+  ir_txt = str_replace(ir_txt, "\n", "");
+  temp = str_replace(temp,"&lt;", "<");
+  temp = str_replace(temp,"&gt;", ">");
+  temp = str_replace(temp,"__IRCODE__", ir_txt);
+  temp = str_replace(temp,"__SWFID__", "aoi2id" + file_id);
+  temp = str_replace(temp,"__BASEURL__", baseUrl);
+  irjs_obj.value = temp;
+}
+//-->
+</script>
+
+<div align="center"><br><a href="http://aoi-project.com/wiki/aoi2/index.php?%CD%D7%CB%BE">→要望はこちら</a></div>
+<div align="center"><br><a href="index.html">→戻る</a></div>
+<div style="display:none"><textarea id="template_irjs">
+&lt;!-- aoi2program.begin --&gt;
+&lt;script type="text/javascript" src="__BASEURL__webparts/swfobject.js"&gt;&lt;/script&gt;
+&lt;div id="__SWFID__"&gt;&lt;/div&gt;
+&lt;script type="text/javascript"&gt;&lt;!--//
+var path = '__BASEURL__webparts/aoivm.swf';//
+var res = '__IRCODE__';//
+res = encodeURIComponent(res);//
+var swf = new SWFObject(path, "aoivm", "640", "400","7", "#FFFFFF");//
+swf.addVariable("mainsource", res);//
+swf.addVariable("library_path", "webparts");//
+swf.write("__SWFID__");//
+//--&gt;
+&lt;/script&gt;
+&lt;!-- aoi2program.end --&gt;
+</textarea>
+</div>
+</body>
+</html>

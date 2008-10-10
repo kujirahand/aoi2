@@ -1,0 +1,38 @@
+#=======================================================================
+# ModulePhidget.aoi2
+#=======================================================================
+# Flash Player7 を対象とした Phidget 操作モジュール
+#-----------------------------------------------------------------------
+# TARGET:SWF
+#-----------------------------------------------------------------------
+
+#-----------------------------------------------------------------------
+#<function>
+#-----------------------------------------------------------------------
+#+ Phidget (USB Interface)
+#-----------------------------------------------------------------------
+#-Phidgetの設定
+●フィジェットダミー
+●フィジェットIP設定(IPを)          ="ModulePhidget"@1  # phidget_setIP       # Phidget IPを指定する
+●フィジェットPORT設定(PORTを)      ="ModulePhidget"@2  # phidget_setPort     # Phidget PORTを指定する
+●フィジェットシリアル番号設定(NOを)="ModulePhidget"@3  # phidget_setSN       # Phidget SerialNumberを指定する
+●フィジェットパスワード設定(PWを)  ="ModulePhidget"@4  # phidget_setPassword # Phidget Passwordを指定する
+●フィジェットセンサーイベント設定(EVENTに|EVENTへ)="ModulePhidget"@5  # phidget_onSensor # Phidget センサーイベントを設定する
+●フィジェット入力イベント設定(EVENTに|EVENTへ)="ModulePhidget"@6  # phidget_onInput # Phidget 入力イベントを設定する
+●フィジェット接続イベント設定(EVENTに|EVENTへ)="ModulePhidget"@7  # phidget_onAttach # Phidget 接続イベントを設定する
+●フィジェット切断イベント設定(EVENTに|EVENTへ)="ModulePhidget"@8  # phidget_onDetach # Phidget 接続イベントを設定する
+●フィジェットエラー設定(EVENTに|EVENTへ)  ="ModulePhidget"@9  # phidget_onError # Phidget Passwordを指定する
+●フィジェットIPとはアクセサ            <フィジェットIP設定             >フィジェットダミー
+●フィジェットPORTとはアクセサ          <フィジェットPORT設定          >フィジェットダミー
+●フィジェットシリアル番号とはアクセサ  <フィジェットシリアル番号設定  >フィジェットダミー
+●フィジェットパスワードとはアクセサ    <フィジェットパスワード設定        >フィジェットダミー
+#-Phidgetの操作
+●フィジェット接続() ="ModulePhidget"@20  # phidget_open      # Phidget Interface と接続する
+●フィジェット切断() ="ModulePhidget"@21  # phidget_close     # Phidget Interface と切断する
+#-Phidgetからのイベント取得
+●フィジェット番号取得 ="ModulePhidget"@30  # phidget_getNo    # Phidget のデバイス番号を得る
+●フィジェット値取得   ="ModulePhidget"@31  # phidget_getValue # Phidget の値を得る
+●フィジェットエラー取得="ModulePhidget"@32  # phidget_getError # Phidget からエラーを得る
+#-----------------------------------------------------------------------
+#</function>
+#-----------------------------------------------------------------------
