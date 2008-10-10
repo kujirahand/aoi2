@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%"
+    show="onShow()">
+    <mx:Box width="100%" height="100%" paddingLeft="8" paddingRight="8">
+        <mx:Form width="100%" backgroundColor="#E0E0E0">
+            <mx:FormItem label="{lang_xml.pref_view.fontsize}">
+                <mx:HBox>
+                    <mx:NumericStepper id="fontsize_num"
+                        minimum="8" maximum="72" value="18"
+                        change="setFontSize(fontsize_num.value)"/>
+                    <mx:Button label="S" click="setFontSize(9)"/>
+                    <mx:Button label="M" click="setFontSize(14)"/>
+                    <mx:Button label="L" click="setFontSize(32)"/>
+                </mx:HBox>
+            </mx:FormItem>
+            <mx:FormItem>
+                <mx:Label id="prev_txt" text="{lang_xml.pref_view.prev_text}"/>
+            </mx:FormItem>
+            <mx:FormItem label="{lang_xml.pref_view.lang}">
+                <mx:ComboBox id="devlang_cmb"
+                    change="setDevLang(devlang_cmb.selectedItem.lang)">
+                    <mx:dataProvider>
+                        <mx:Object label="{lang_xml.pref_view.lang_aoi}" lang=".aoi" />
+                        <mx:Object label="{lang_xml.pref_view.lang_basic}" lang=".bas" />
+                    </mx:dataProvider>
+                </mx:ComboBox>
+            </mx:FormItem>
+        </mx:Form>
+    </mx:Box>
+<mx:XML id="lang_xml"/>
+<mx:Script>
+    <![CDATA[
+        import global.ViewCtrl;
+        import global.ModelFileInfo;
+        import mx.controls.TextArea;
+        import global.ModelSetting;
+        import global.GlobalData;
+        import mx.controls.Alert;
+        
+        private var setting:ModelSetting;
+        private var file_info:ModelFileInfo;
+        
+        private function onShow():void {
+            setting = GlobalData.model.setting;
+            file_info = GlobalData.model.file_info;
+            setCurrentSetting();
+        }
+        
+        private function setCurrentSetting():void {
+            // font size
+            var t:TextArea = GlobalData.app.edit_view.main_txt;
+            fontsize_num.value = t.getStyle("fontSize");
+            setPreviewText(fontsize_num.value);
+            // dev lang
+            setDevLang(file_info.lang);
+        }
+        private function setFontSize(n:Number):void {
+            var t:TextArea = GlobalData.app.edit_view.main_txt;
+            t.setStyle("fontSize", n);
+            fontsize_num.value = n;
+            setPreviewText(n);
+            setting.main_txt_fontsize = n;
+            GlobalData.model.saveSetting();
+        }
+        private function setPreviewText(fsize:Number):void {
+            prev_txt.setStyle("fontSize", fsize);
+        }
+        private function setDevLang(lang:String):void {
+            if (lang == null) return;
+            trace("lang=" + lang);
+            if (lang == ".aoi") {
+                devlang_cmb.selectedIndex = 0;
+            }
+            else if (lang == ".bas") {
+                devlang_cmb.selectedIndex = 1;
+            }
+            file_info.lang = lang;
+            GlobalData.model.saveFileInfo();
+            ViewCtrl.changeLang();
+        }
+    ]]>
+</mx:Script>
+</mx:Canvas>

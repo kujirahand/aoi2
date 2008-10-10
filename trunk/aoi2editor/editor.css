@@ -1,0 +1,20 @@
+/* CSS file */
+.mainView {
+    width:"100%";
+    height:"100%";
+    padding-top:8;
+    padding-right:8;
+    padding-bottom:8;
+    padding-left:2;
+    cornerRadius: 8;
+    borderStyle: "solid";
+    dropShadowEnabled:      true;
+}
+
+.padding8 {
+    padding-top:4;
+    padding-right:4;
+    padding-bottom:4;
+    padding-left:4;
+}
+     

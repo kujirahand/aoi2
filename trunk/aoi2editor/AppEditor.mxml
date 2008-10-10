@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:local="*"
+    xmlns:view="view.*"
+    layout="absolute"
+    backgroundColor="#FFFFFF"
+    preinitialize="onPreInit()"
+    initialize="onInit()"
+    creationComplete="onCreate()"
+    >
+    
+    <!-- include -->
+    <mx:Style source="editor.css"/>
+    <!-- script -->
+    <mx:Script source="AppEditAction.as"/>
+    <!-- model -->
+    <mx:XML source="global/lang_ja.xml" id="lang_xml" />
+    <mx:HTTPService id="config_service"
+        url="config_editor.xml"
+        resultFormat="e4x"
+        result="config_onLoad()"
+    >
+    </mx:HTTPService>
+    
+    <!-- layout -->
+    <mx:VBox width="100%" height="100%">
+        <mx:Box paddingRight="8" width="100%">
+            <mx:ApplicationControlBar width="100%">
+                <mx:Label id="apptitle_lbl" text="{lang_xml.title}"/>
+                <mx:HBox horizontalAlign="right" width="100%" verticalAlign="middle">
+                    <mx:Label id="version_lbl" text="ver 1000"/>
+                    <mx:ButtonBar dataProvider="{editor_views}"
+                        buttonWidth="60"/>
+                </mx:HBox> 
+            </mx:ApplicationControlBar>
+        </mx:Box>
+        <mx:Box width="100%" height="100%" cornerRadius="4"
+            paddingRight="8" paddingBottom="8">
+        <mx:ViewStack id="editor_views" width="100%" height="100%"
+            creationPolicy="all" styleName="mainView"
+            selectedIndex="1">
+            <view:FilesView id="file_view" label="{lang_xml.view.file}"
+                showEffect="WipeDown" hideEffect="WipeUp"
+                lang_xml="{lang_xml}"
+                />
+            <view:EditView id="edit_view" label="{lang_xml.view.edit}"
+                lang_xml="{lang_xml}"
+                showEffect="WipeDown" hideEffect="WipeUp"/>
+            <view:PreferenceView id="pref_view" label="{lang_xml.view.preference}"
+                lang_xml="{lang_xml}"
+                showEffect="WipeDown" hideEffect="WipeUp"/>
+        </mx:ViewStack>
+        </mx:Box>
+    </mx:VBox>
+    
+</mx:Application>

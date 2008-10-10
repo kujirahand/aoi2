@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%"
+    creationComplete="onCreate()"
+    show="onShow()"
+    xmlns:view="view.*">
+    <mx:VBox width="100%" height="100%">
+        <!-- main pane -->
+        <mx:HDividedBox x="0" y="0" width="100%" height="100%">
+            <!-- left bar -->
+            <mx:VBox width="170" height="100%"
+                paddingBottom="8" paddingRight="2"
+                paddingTop="8" paddingLeft="8">
+                <!-- left -->
+                <mx:Accordion id="left_acc"
+                    width="100%" height="100%">
+                    <!-- command tab -->
+                    <mx:VDividedBox label="{lang_xml.edit_view.command_list}"
+                        width="100%" height="70%">
+                        <mx:Tree id="command_tree"
+                            labelField="@aoi"
+                            width="100%" height="100%"
+                            change="command_tree_onChange()"
+                            dragComplete="insertCommand()"
+                            dragMoveEnabled="false"
+                            dragEnabled="true"/>
+                    </mx:VDividedBox>
+                    <!-- search tab -->
+                    <mx:Canvas label="{lang_xml.edit_view.command_search}"
+                        width="100%" height="100%">
+                        <mx:VBox width="100%" height="100%">
+                            <mx:Canvas width="100%" height="23">
+                                <mx:HBox width="100%" height="100%"
+                                    paddingTop="4"
+                                    paddingRight="4">
+                                    <mx:Label text="key"/>
+                                    <mx:TextInput id="find_txt"
+                                        width="100%"
+                                        imeMode="JAPANESE_HIRAGANA"
+                                        keyUp="find_execute(event)"/>                        
+                                </mx:HBox>
+                            </mx:Canvas>
+                            <mx:List id="find_list"
+                                width="100%" height="100%"
+                                dragEnabled="true"
+                                dragComplete="insertCommandList()"
+                                dataProvider="{find_list_data}"
+                                click="showCommandInList()"
+                                />
+                        </mx:VBox>
+                    </mx:Canvas>
+                </mx:Accordion>
+            </mx:VBox>
+            <!-- right text editor -->
+            <mx:VBox width="100%" height="100%"
+                paddingBottom="4" paddingRight="8"
+                    paddingTop="8" paddingLeft="2">
+                <mx:Box width="100%" height="100%">
+                    <view:TextAreaEx
+                        id="main_txt"
+                        width="100%" height="100%"
+                        dragEnter="acceptDrop(event)"
+                        dragOver="main_txt_dragOver(event)"
+                        fontSize="14"
+                        wordWrap="false"
+                        imeMode="JAPANESE_HIRAGANA"
+                        change="text_onChange()"
+                        keyDown="checkStatus(event)"
+                        keyUp="checkSpecialKey(event)"
+                        mouseDown="checkStatus(null)"
+                        fontFamily="ＭＳ ゴシック,_typewriter"/>
+                </mx:Box>
+                <mx:HBox horizontalAlign="right" width="100%">
+                    <mx:Label text="[0]行目" id="status_txt" width="100" textAlign="right"/>
+                </mx:HBox>
+            </mx:VBox>
+        </mx:HDividedBox>
+        <!-- sutatus pane -->
+        <mx:VBox width="100%" horizontalAlign="right">
+            <mx:HBox horizontalAlign="left" width="100%"
+                paddingLeft="8" paddingRight="8">
+                <mx:Text width="100%" id="desc_txt"
+                    text="[Ctrl+Space]で単語補完"
+                />
+                <mx:Button label="{lang_xml.cmd.run}" icon="@Embed(source='Run.gif',mimeType='image/gif')"
+                        width="80"
+                        click="runScript()"/>
+
+            </mx:HBox>
+        </mx:VBox>
+    </mx:VBox>
+    <!-- menu -->
+    <mx:Script source="EditViewAction.as"/>
+    <!-- model -->
+    <mx:XML id="lang_xml"/>
+    <mx:ArrayCollection id="find_list_data"/>
+</mx:Canvas>
+
