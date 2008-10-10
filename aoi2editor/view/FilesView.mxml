@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%"
+    show="getList()">
+    <mx:VBox width="100%" height="100%">
+        <mx:Box width="100%" height="100%"
+            paddingLeft="8">
+            <mx:DataGrid id="files_grid"
+                width="100%"
+                height="100%"
+                dataProvider="{files_ac}"
+                doubleClickEnabled="true"
+                doubleClick="openFile()">
+                <mx:columns>
+                    <mx:DataGridColumn headerText="ID" dataField="file_id" width="48"/>
+                    <mx:DataGridColumn headerText="{lang_xml.file_view.username}" dataField="user_name" width="150"/>
+                    <mx:DataGridColumn headerText="{lang_xml.file_view.filename}" dataField="filename" width="200"/>
+                    <mx:DataGridColumn headerText="{lang_xml.file_view.lang}" dataField="lang" width="100"/>
+                    <mx:DataGridColumn headerText="{lang_xml.file_view.public_attr}" dataField="public_attr" width="32"/>
+                    <mx:DataGridColumn headerText="{lang_xml.file_view.date}" dataField="update_time" width="128"
+                        labelFunction="Config.unixtime2str">
+                    </mx:DataGridColumn>
+                </mx:columns>
+            </mx:DataGrid>
+        </mx:Box>
+        <mx:HBox width="100%" horizontalAlign="left" paddingLeft="8" paddingRight="8">
+            <mx:Button label="{lang_xml.file_view.login}" click="showLogin()"/>
+            <mx:Button label="{lang_xml.file_view.reflesh}" click="getList()"/>
+            <mx:HBox width="100%" horizontalAlign="right">
+                <mx:Button label="{lang_xml.file_view.newfile}" click="newFile()" icon="@Embed(source='New.gif',mimeType='image/gif')"/>
+                <mx:Button label="{lang_xml.file_view.openfile}" click="openFile()" icon="@Embed(source='Open.gif',mimeType='image/gif')"/>
+                <mx:Button label="{lang_xml.file_view.delfile}" click="removeFile()" icon="@Embed(source='Del.gif',mimeType='image/gif')"/>
+            </mx:HBox>
+        </mx:HBox>
+    </mx:VBox>
+        
+<!-- style -->
+<mx:Style source="../editor.css"/>
+
+<!-- model -->
+<mx:XML id="lang_xml" />
+<mx:ArrayCollection id="files_ac" />
+
+<mx:HTTPService id="files_service"
+        resultFormat="text"
+        result="getList_onResult()"
+        />
+
+<!-- script -->
+<mx:Script>
+    <![CDATA[
+        import mx.events.CloseEvent;
+        import mx.containers.Form;
+        import mx.managers.PopUpManager;
+        import global.ViewCtrl;
+        import global.Lang;
+        import mx.controls.Alert;
+        import global.Config;
+        import com.adobe.serialization.json.JSON;
+        
+        private var frmLoading:NowLoading;
+        private var frmLogin:LoginForm;
+        
+        private function getList():void {
+            var url:String = Config.getAPIUrl('files');
+            url = url + "?userid=0";
+            trace("url="+url);
+            files_service.url = url + '&time=' + (new Date().getTime());
+            files_service.send();
+            if (frmLoading) {
+                PopUpManager.removePopUp(frmLoading);
+                frmLoading = null;
+            }
+            frmLoading = NowLoading(PopUpManager.createPopUp(
+                this, NowLoading, false));
+            PopUpManager.centerPopUp(frmLoading);
+        } 
+        private function getList_onResult(): void {
+            var src:String = String(files_service.lastResult);
+            var obj:Object = JSON.decode(src);
+            if (obj.result != true) {
+                Alert.show(Lang.msg('Failed to read'));
+                return;
+            }
+            files_ac.source = new Array();
+            for each (var o:Object in obj.files) {
+                files_ac.addItem(o);
+            }
+            files_ac.source.reverse();
+            files_ac.refresh();
+            PopUpManager.removePopUp(frmLoading);
+            frmLoading = null;
+        }
+        private function openFile():void {
+            if (files_grid.selectedItem == null) return;
+            var item:Object = files_grid.selectedItem;
+            if (item["public_attr"] == 1) {
+            	ViewCtrl.openFile(item.file_id);
+            }
+            else {
+           		var frm:PasswordForm = PopUpManager.createPopUp(
+                	this,
+                	PasswordForm,
+                	true) as PasswordForm;
+            	frm.lang_xml = lang_xml;
+            	frm.title = Lang.msg("Please Input Password.");
+            	frm.execute = openFile_password;
+            	PopUpManager.centerPopUp(frm);
+            }
+            PopUpManager.removePopUp(frmLoading);
+        }
+        private function openFile_password(frm:PasswordForm):void {
+            var item:Object = files_grid.selectedItem;
+        	var pw:String = frm.password_txt.text;
+        	ViewCtrl.openFile(item.file_id, pw);
+            PopUpManager.removePopUp(frmLoading);
+        }
+        private function newFile():void {
+            Alert.show(
+                Lang.msg("May I initialize the text?"), 
+                Lang.msg("Initialize"),
+                Alert.YES | Alert.NO, this, menu_new_execute);
+        }
+        
+        private function menu_new_execute(event:CloseEvent):void {
+            if (event.detail == Alert.NO) return;
+            ViewCtrl.clearFile();
+            ViewCtrl.changeEditView();
+        }
+        
+        private function removeFile():void {
+            if (files_grid.selectedItem == null) return;
+            Alert.show(
+                Lang.msg("May I remove the file?"),
+                Lang.msg("Remove File"),
+                Alert.YES | Alert.NO, this, removeFile_q);
+        }
+        
+        private function removeFile_q(event:CloseEvent):void {
+            if (event.detail == Alert.NO) return;
+            var frm:PasswordForm = PopUpManager.createPopUp(
+                this,
+                PasswordForm,
+                true) as PasswordForm;
+            frm.lang_xml = lang_xml;
+            frm.title = Lang.msg("Remove File");
+            frm.execute = removeFile_execute;
+            PopUpManager.centerPopUp(frm);
+        }
+        private function removeFile_execute(frm:PasswordForm):void {
+            // remove execute
+            var api_url:String = Config.getAPIUrl("removeFile");
+            var req:URLRequest = new URLRequest();
+            var params:URLVariables = new URLVariables();
+            params.file_id = files_grid.selectedItem.file_id;
+            params.password = frm.password_txt.text;
+            req.url = api_url;
+            req.data = params;
+            var loader:URLLoader = new URLLoader();
+            loader.addEventListener(Event.COMPLETE, removeFile_complete);
+            loader.load(req);
+        }
+        private function removeFile_complete(event:Event):void {
+            var loader:URLLoader = event.target as URLLoader;
+            var src:String = String(loader.data);
+            trace(src);
+            var obj:Object = JSON.decode(src);
+            if (obj.result != true) {
+                Alert.show(Lang.msg("Failed to delete."));
+                return;
+            }
+            getList();
+        }
+        private function showLogin():void {
+            Alert.show("未実装です");
+            /*
+            frmLogin = PopUpManager.createPopUp(this, LoginForm, true) as LoginForm;
+            PopUpManager.centerPopUp(frmLogin);
+            */
+        }
+    ]]>
+</mx:Script>
+</mx:Canvas>

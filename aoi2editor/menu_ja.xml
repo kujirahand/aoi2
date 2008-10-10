@@ -1,0 +1,17 @@
+<root>
+	<menuitem label="ファイル">
+		<menuitem label="新規" menuid="new"/>
+		<menuitem label="開く" menuid="open"/>
+		<menuitem label="保存" menuid="save"/>
+	</menuitem>
+	<menuitem label="編集">
+		<menuitem label="コピー" menuid="copy"/>
+		<menuitem label="切り取り" menuid="cut"/>
+		<menuitem label="貼り付け" menuid="paste"/>
+		<menuitem label="" type="separator"/>
+		<menuitem label="全て選択" menuid="select_all"/>
+	</menuitem>
+	<menuitem label="実行">
+		<menuitem label="実行" menuid="run"/>
+	</menuitem>
+</root>

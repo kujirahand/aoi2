@@ -1,0 +1,49 @@
+<root>
+    <title>葵2エディタ</title>
+    <view>
+        <file>ファイル</file>
+        <edit>エディタ</edit>
+        <preference>設定</preference>
+    </view>
+    <file_view>
+        <username>ユーザー名</username>
+        <filename>ファイル名</filename>
+        <date>更新日時</date>
+        <lang>言語</lang>
+        <public_attr>公開</public_attr>
+        <newfile>新規</newfile>
+        <openfile>開く</openfile>
+        <delfile>削除</delfile>
+        <login>ログイン</login>
+        <reflesh>更新</reflesh>
+        <password>パスワード</password>
+        <execute>実行</execute>
+        <cancel>中止</cancel>
+    </file_view>
+    <pref_view>
+        <fontsize>フォントサイズ</fontsize>
+        <prev_text>あいうえお abcde</prev_text>
+        <lang>開発言語</lang>
+        <lang_aoi>日本語プログラミング言語</lang_aoi>
+        <lang_basic>BASIC言語</lang_basic>
+    </pref_view>
+    <edit_view>
+    	<command_list>命令一覧</command_list>
+    	<command_search>命令検索</command_search>
+    </edit_view>
+    <cmd>
+        <run>実行</run>
+    </cmd>
+    <messages>
+        <item name="No Description">詳細説明がありません。</item>
+        <item name="Initialize">初期化</item>
+        <item name="May I initialize the text?">初期化しても良いですか？</item>
+        <item name="May I remove the file?">ファイルを削除しても良いですか？</item>
+        <item name="Remove File">ファイルの削除</item>
+        <item name="Command">命令</item>
+        <item name="Search">検索</item>
+        <item name="Failed to read">読み込みに失敗しました。</item>
+        <item name="Failed to delete.">削除に失敗しました。</item>
+        <item name="Please Input Password.">パスワードが必要です。</item>
+    </messages>
+</root>
