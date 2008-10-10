@@ -1,0 +1,117 @@
+#-----------------------------------------------------------
+# ModuleOffice.aoi2
+#-----------------------------------------------------------------------
+# TARGET:SWF
+#-----------------------------------------------------------------------
+# 葵で Excel/Word/OpenOffice.org を操作する
+# *** 拡張サービス ***
+#-----------------------------------------------------------------------
+#<function>
+#-----------------------------------------------------------------------
+#+Office
+#-----------------------------------------------------------------------
+#-Officeサーバー(花瓶)への接続
+●花瓶ダミー
+●花瓶IP設定(IPを)          ="ModuleOffice"@1  # kabin_setIP       # Officeサーバー(花瓶)の IPを指定する
+●花瓶PORT設定(PORTを)      ="ModuleOffice"@2  # kabin_setPort     # Officeサーバー(花瓶)の PORTを指定する
+●花瓶パスワード設定(PWを)  ="ModuleOffice"@3  # kabin_setPassword # Officeサーバー(花瓶)の Passwordを指定する
+●花瓶タイプ設定(TYPEを)    ="ModuleOffice"@4  # kabin_setType     # MSOffice か OpenOffice.org かを指定する
+●花瓶IPとはアクセサ            <花瓶IP設定             >花瓶ダミー
+●花瓶PORTとはアクセサ          <花瓶PORT設定           >花瓶ダミー
+●花瓶パスワードとはアクセサ    <花瓶パスワード設定     >花瓶ダミー
+●花瓶接続="ModuleOffice"@5  # kabin_connect     # 花瓶へ接続する
+●花瓶切断="ModuleOffice"@6  # kabin_disconnect  # 花瓶との接続を切る
+●花瓶エラー設定(EVENTに|EVENTの)="ModuleOffice"@7 # kabin_setError # 花瓶のエラーを受け取るイベントを設定する
+●花瓶エラー取得="ModuleOffice"@8 # kabin_getError # 花瓶のエラーメッセージを表示する
+●花瓶コマンド実行(Sを|Sの|Sで)="ModuleOffice"@9 # kabin_command # 花瓶サーバーに対し任意のコマンドを送る
+#-----------------------------------------------------------------------
+//-エクセル(Excel)
+●エクセル起動(Aで)="ModuleOffice"@67# func67 #可視A(オンかオフ)でエクセルを起動する#4300
+●エクセル終了()="ModuleOffice"@68# func68 #起動したエクセルを終了する#4301
+●エクセル新規ブック()="ModuleOffice"@69# func69 #新規ブックを作る#4302
+●エクセル新規シート()="ModuleOffice"@70# func70 #新規シートを追加する#4303
+●エクセル開く(Sを|Sから|Sの)="ModuleOffice"@71# func71 #ファイルSからファイルを開く。#4304
+●エクセル保存(Sへ|Sに)="ModuleOffice"@72# func72 #ファイルＳへファイルを保存する#4305
+●エクセルシート注目(Aの|Aに|Aを)="ModuleOffice"@73# func73 #A番目(1～n)または名前Aのシートをアクティブにする#4306
+●エクセルブック注目(Aの|Aに|Aを)="ModuleOffice"@74# func74 #A番目(1～n)のブックをアクティブにする#4307
+●エクセルCSV保存(Sへ|Sに)="ModuleOffice"@75# func75 #ファイルＳへファイルをCSV形式で保存する#4308
+●エクセルTSV保存(Sへ|Sに)="ModuleOffice"@76# func76 #ファイルＳへファイルをTSV形式で保存する#4309
+●エクセルセル設定(CELLへVを|CELLに)="ModuleOffice"@77# func77 #セルA(A1~)へVを設定する#4310
+●エクセルセル取得(CELLの|CELLを)="ModuleOffice"@78# func78 #セルA(A1~)を取得して返す#4311
+●エクセル一括設定(CELLへVを|CELLに)="ModuleOffice"@79# func79 #セル(A1~)へ二次元配列Vを一括設定する#4312
+●エクセル一括取得(C1からC2まで|C2までの|C2の)="ModuleOffice"@80# func80 #セルC1(A1~)からC2までのセルを一括取得して返す。#4313
+●エクセル選択(CELLを|CELLに|CELLへ)="ModuleOffice"@81# func81 #セル(A1~)を選択する。A1:C4のように範囲指定も可能。#4314
+●エクセルコピー()="ModuleOffice"@82# func82 #選択されているセルをコピーする。#4315
+●エクセル貼り付け()="ModuleOffice"@83# func83 #選択されているセルへクリップボードから貼り付けする。#4316
+●エクセル着色(Vを|Vで|Vの|Vに)="ModuleOffice"@84# func84 #選択されているセルを色Vで着色する。#4317
+●エクセルマクロ実行(AをBで)="ModuleOffice"@85# func85 #マクロAを引数Bで実行。関数なら結果を返す。#4318
+●エクセルシート印刷プレビュー()="ModuleOffice"@86# func86 #アクティブなシートを印刷プレビューする#4319
+●エクセルシート印刷()="ModuleOffice"@87# func87 #アクティブなシートを印刷する#4320
+●エクセルブック印刷プレビュー()="ModuleOffice"@88# func88 #アクティブなワークブックを印刷プレビューする#4321
+●エクセルブック印刷()="ModuleOffice"@89# func89 #アクティブなワークブックを印刷する#4322
+●エクセル可視変更(Aに)="ModuleOffice"@90# func90 #エクセルの可視をオン(=1)かオフ(=0)に変更する。#4323
+●エクセル全選択()="ModuleOffice"@92# func92 #セル全てを選択する。#4325
+●エクセル選択範囲置換(AからBへ|AをBに)="ModuleOffice"@93# func93 #選択範囲のセルにあるAをBに置換する。#4326
+●エクセル選択行高さ設定(Vに|Vへ)="ModuleOffice"@94# func94 #選択範囲のセルの高さを設定する。#4327
+●エクセル選択列幅設定(Vに|Vへ)="ModuleOffice"@95# func95 #選択範囲のセルの幅を設定する。#4328
+●エクセルシート列挙()="ModuleOffice"@98# func98 #シートの一覧を取得して返す#4702
+●エクセルキー送信(KEYSの|KEYSを)="ModuleOffice"@99# func99 #現在開いているExcelウィンドウにキーを送信する。#4703
+●エクセルシートコピー(SHEETをNEWSHEETに)="ModuleOffice"@100# func100 #ExcelのシートSHEETを複製してNEWSHEETとする#4704
+●エクセルシート名前変更(NAMEをNEWNAMEに|NAMEからNEWNAMEへ)="ModuleOffice"@101# func101 #ExcelのシートNAMEの名前をNEWNAMEへ変更する#4705
+//-ワード(Word)
+●ワード起動(Aで)="ModuleOffice"@104# func104 #可視A(オンかオフ)でワードを起動する#4330
+●ワード終了()="ModuleOffice"@105# func105 #ワードを終了する#4331
+●ワード保存(Fへ|Fに)="ModuleOffice"@106# func106 #ワード文書Fを保存する#4332
+●ワード開く(Fを|Fで|Fの)="ModuleOffice"@107# func107 #ワード文書Fをひらく#4333
+●ワード新規文書()="ModuleOffice"@108# func108 #新規ワード文書を作る#4334
+●ワードブックマーク挿入(SにVを|Sへ)="ModuleOffice"@109# func109 #ブックマークSに値Vを挿入する#4335
+●ワード印刷プレビュー()="ModuleOffice"@110# func110 #印刷プレビューを表示する#4336
+●ワード印刷()="ModuleOffice"@111# func111 #ワードで印刷する#4337
+●ワードマクロ実行(AをBで)="ModuleOffice"@112# func112 #ワードのマクロAを引数Bで実行し関数なら値を返す。#4338
+●ワード本文取得()="ModuleOffice"@113# func113 #ワードの本文をテキストで得て返す#4339
+●ワード文章追加(Sを)="ModuleOffice"@114# func114 #ワードに文章Sを追加する。#4340
+●ワード文書閉じる()="ModuleOffice"@115# func115 #アクティブなワード文書を閉じる#4341
+●ワード可視変更(Aに)="ModuleOffice"@116# func116 #ワードの可視をオン(=1)かオフ(=0)に変更する。#4342
+●ワード置換(AをBに|AからBへ)="ModuleOffice"@117# func117 #ワードの文章中の文字列AをBに置換する。#4343
+#-----------------------------------------------------------------------
+//-CALC(OpenOffice.org)
+●CALC起動(Aで)="ModuleOffice"@153# func153 #可視A(オンかオフ)でCALCを起動する#4800
+●CALC終了()="ModuleOffice"@154# func154 #起動したCALCを終了する#4801
+●CALC新規ブック()="ModuleOffice"@155# func155 #新規ブックを作る#4802
+●CALC新規シート()="ModuleOffice"@156# func156 #新規シートを追加する#4803
+●CALC開く(Sを|Sから|Sの)="ModuleOffice"@157# func157 #ファイルSからファイルを開く。#4804
+●CALC保存(Sへ|Sに)="ModuleOffice"@158# func158 #ファイルＳへファイルを保存する#4805
+●CALCシート注目(Aの|Aに|Aを)="ModuleOffice"@159# func159 #A番目(0～n)または名前Aのシートをアクティブにする#4806
+●CALC_CSV保存(Sへ|Sに)="ModuleOffice"@160# func160 #ファイルＳへファイルをCSV形式で保存する#4808
+●CALCセル設定(CELLへVを|CELLに)="ModuleOffice"@161# func161 #セルA(A1~)へVを設定する#4810
+●CALCセル取得(CELLの|CELLを)="ModuleOffice"@162# func162 #セルA(A1~)を取得して返す#4811
+●CALC一括設定(CELLへVを|CELLに)="ModuleOffice"@163# func163 #セル(A1~)へ二次元配列Vを一括設定する#4812
+●CALC一括取得(C1からC2まで|C2までの|C2の)="ModuleOffice"@164# func164 #セルC1(A1~)からC2までのセルを一括取得して返す。#4813
+●CALC選択(CELLを|CELLに|CELLへ)="ModuleOffice"@165# func165 #セル(A1~)を選択する。A1:C4のように範囲指定も可能。#4814
+●CALCコピー()="ModuleOffice"@166# func166 #選択されているセルをコピーする。#4815
+●CALC貼り付け()="ModuleOffice"@167# func167 #選択されているセルへクリップボードから貼り付けする。#4816
+●CALC着色(Vを|Vで|Vの|Vに)="ModuleOffice"@168# func168 #選択されているセルセルを色Vで着色する。#4817
+●CALCシート印刷プレビュー()="ModuleOffice"@169# func169 #アクティブなシートを印刷プレビューする#4819
+●CALC印刷()="ModuleOffice"@170# func170 #印刷する#4820
+●CALC全選択()="ModuleOffice"@172# func172 #セル全てを選択する。#4825
+●CALC_PDF保存(Sへ|Sに)="ModuleOffice"@173# func173 #ファイルＳへPDF形式で保存する#4826
+//-WRITER(OpenOffice.org)
+●WRITER起動(Aで)="ModuleOffice"@174# func174 #可視A(オンかオフ)でWriterを起動する#4830
+●WRITER終了()="ModuleOffice"@175# func175 #Writerを終了する#4831
+●WRITER保存(Fへ|Fに)="ModuleOffice"@176# func176 #文書Fを保存する#4832
+●WRITER開く(Fを|Fで|Fの)="ModuleOffice"@177# func177 #文書Fをひらく#4833
+●WRITER新規文書()="ModuleOffice"@178# func178 #新規文書を作る#4834
+●WRITERブックマーク挿入(SにVを|Sへ)="ModuleOffice"@179# func179 #ブックマークSに値Vを挿入する#4835
+●WRITER印刷プレビュー()="ModuleOffice"@180# func180 #印刷プレビューを表示する#4836
+●WRITER印刷()="ModuleOffice"@181# func181 #印刷する#4837
+●WRITER本文取得()="ModuleOffice"@182# func182 #本文をテキストで得て返す#4839
+●WRITER文章追加(Sを)="ModuleOffice"@183# func183 #文章Sを追加する。#4840
+●WRITER文書閉じる()="ModuleOffice"@184# func184 #アクティブな文書を閉じる#4841
+●WRITER_PDF保存(Fへ|Fに)="ModuleOffice"@185# func185 #ファイルFへPDFを保存する#4842
+
+
+#-----------------------------------------------------------------------
+#</function>
+#-----------------------------------------------------------------------
+
+

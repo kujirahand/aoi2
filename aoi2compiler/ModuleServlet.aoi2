@@ -1,0 +1,18 @@
+#----
+# ModuleServlet.aoi2
+#----
+# TARGET:JAVA
+
+#<function>
+#+サーブレット
+#-サーブレット
+●ヘッダ取得="servlet.ModuleServlet"@1 # getHeader # リクエストヘッダ一覧を表示する 
+●フォーム取得="servlet.ModuleServlet"@2 # getForm # リクエストパラメータ一覧を表示する 
+●クッキー取得="servlet.ModuleServlet"@3 # getCookie # クッキーの一覧を表示する 
+●クッキー設定(NAMEにVALUEをAGEまで|NAMEへ)="servlet.ModuleServlet"@4 # setCookie # クッキー名NAMEに値VALUEを期限AGEまで(秒単位で指定)設定する 
+●URI取得="servlet.ModuleServlet"@5 # getURI# ページURIを表示する 
+●セッション取得(NAMEの)="servlet.ModuleServlet"@6 # session_get # セッションを開始し、NAMEの値を取得する 
+●セッション設定(NAMEにVALUEを|NAMEへVALUEの)="servlet.ModuleServlet"@7 # session_set # セッションを開始し、NAMEへVALUEを設定する 
+#</function>
+
+
