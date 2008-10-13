@@ -83,7 +83,7 @@ if ($x < 1000) {
 <br>
 <br>
 <br>
-<a href="http://aoi-project.com/">вк░к2</a><br>
+<a href="http://editor.aoikujira.com/">вк░к2</a><br>
 <?php
 }
 ?>
